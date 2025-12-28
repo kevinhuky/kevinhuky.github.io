@@ -58,13 +58,16 @@ theme:
         - search.suggest  # 启用搜索建议
         - navigation.tabs                       #在header中添加导航条
         - navigation.tabs.sticky
-        - navigation.top                        #回到顶部 
+        - navigation.top                        #回到顶部
         - navigation.path
         - navigation.instant
         - navigation.indexes
         - navigation.prune
         - navigation.sections
+        - content.blog                          # 启用博客内容特性
+        - content.tabs.link                     # 启用内容标签链接
         - content.code.annotate
+        - header.autohide                       # 滚动时自动隐藏/显示导航条
 
 plugins:
   - autorefs
@@ -76,7 +79,7 @@ plugins:
         - categories
         - tags
   - blog:
-        draft: true
+      draft: true
   - search:
 #   - minify:
 #       minify_html: true
@@ -89,5 +92,6 @@ extra_css:
   - css/extra.css  # 加载自定义 CSS
 
 nav:
-- Blog:
-    - blog/index.md
+  - About: index.md
+  - Blog: blog/index.md
+
