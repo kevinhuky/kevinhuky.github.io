@@ -49,10 +49,10 @@ theme:
     favicon: assets/logo/logo.png
     language: en
     palette:
-        primary: indigo
+        primary: blue grey
     custom_dir: docs/templates
     icon:
-        logo: material/state-machine
+        logo: material/rocket
         repo: fontawesome/brands/github         #指定仓库图标
     features:
         - search.suggest  # 启用搜索建议
@@ -93,5 +93,7 @@ extra_css:
 
 nav:
   - About: index.md
-  - Blog: blog/index.md
+  - Blog: 
+     - blog/index.md
+    
 
