@@ -1,13 +1,13 @@
 #[Info]
-site_name: Devhiker's Website
+site_name: KevinHu's Website
 site_url: https://devhiker.xyz
-site_author: devhiker
+site_author: kevinHu
 
-copyright: Copyright &copy; 2025 Devhiker
+copyright: Copyright &copy; 2025 KevinHu
 #[Config]
 #[Repo Config]
-repo_url: https://github.com/devhikerxyz/devhikerxyz.github.io 
-repo_name: devhikerxyz.github.io
+repo_url: https://github.com/kevinhuky/kevinhuky.github.io 
+repo_name: kevinhuky.github.io
 
 #[扩展]
 extra:
@@ -22,10 +22,10 @@ extra:
           make our documentation better.
     social:
         - icon: fontawesome/brands/github
-          link: https://github.com/devhikerxyz
+          link: https://github.com/kevinhuky
 
         - icon: fontawesome/solid/paper-plane
-          link: mailto:devhiker.xyz@gmail.com
+          link: mailto:kangyinghuu@gmail.com
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -46,7 +46,7 @@ markdown_extensions:
 #[UI]
 theme:
     name: 'material'                            #主题名
-    favicon: assets/logo/devhikerxyz-logo.png
+    favicon: assets/logo/logo.png
     language: en
     palette:
         primary: indigo
