@@ -52,7 +52,7 @@ theme:
         primary: blue grey
     custom_dir: docs/templates
     icon:
-        logo: material/rocket
+        logo: material/coffee
         repo: fontawesome/brands/github         #指定仓库图标
     features:
         - search.suggest  # 启用搜索建议
