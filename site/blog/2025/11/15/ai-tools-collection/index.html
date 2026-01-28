@@ -10,13 +10,13 @@
         <meta name="author" content="kevinHu">
       
       
-        <link rel="canonical" href="https://devhiker.xyz/blog/2025/06/29/cursor-experience/">
+        <link rel="canonical" href="https://devhiker.xyz/blog/2025/11/15/ai-tools-collection/">
       
       
-        <link rel="prev" href="../../27/mq/">
+        <link rel="prev" href="../../../10/20/indie-hacker-thoughts/">
       
       
-        <link rel="next" href="../../../07/15/spring-boot-best-practices/">
+        <link rel="next" href="../../../12/31/2025-year-review/">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../../../../feed_rss_created.xml">
@@ -27,7 +27,7 @@
     
     
       
-        <title>用 Cursor 有感：AI 编程工具带来的冲击 - KevinHu's Website</title>
+        <title>我在用的 AI 工具，以及一些使用心得 - KevinHu's Website</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cursor-ai" class="md-skip">
+        <a href="#ai" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              用 Cursor 有感：AI 编程工具带来的冲击
+              我在用的 AI 工具，以及一些使用心得
             
           </span>
         </div>
@@ -738,6 +738,260 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      写代码：Cursor
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="写代码：Cursor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      现在怎么用
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      踩过的坑
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chatgpt-claude" class="md-nav__link">
+    <span class="md-ellipsis">
+      日常问答：ChatGPT / Claude
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="日常问答：ChatGPT / Claude">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chatgptgpt-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      ChatGPT（GPT-4）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#claude" class="md-nav__link">
+    <span class="md-ellipsis">
+      Claude
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      我的用法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prompt 心得
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prompt 心得">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 给足上下文
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 明确输出格式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 分步骤来
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 让它扮演角色
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 不满意就追问
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      其他工具
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="其他工具">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-copilot" class="md-nav__link">
+    <span class="md-ellipsis">
+      GitHub Copilot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#perplexity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Perplexity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notebooklm" class="md-nav__link">
+    <span class="md-ellipsis">
+      NotebookLM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-midjourney-dall-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI 绘图（Midjourney / DALL-E）
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      我的工作流
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      一些思考
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一些思考">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI 会取代程序员吗？
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      应该焦虑吗？
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      什么能力更重要了？
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      最后
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -792,7 +1046,7 @@
                     <li class="md-nav__item">
                       <div class="md-nav__link">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
-                        <time datetime="2025-06-29 00:00:00+00:00" class="md-ellipsis">June 29, 2025</time>
+                        <time datetime="2025-11-15 00:00:00+00:00" class="md-ellipsis">November 15, 2025</time>
                       </div>
                     </li>
                     
@@ -815,7 +1069,7 @@
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
                           <span class="md-ellipsis">
                             
-                              1 min read
+                              2 min read
                             
                           </span>
                         </div>
@@ -842,18 +1096,136 @@
   
 
 
-<p>随着 AI 编程工具的发展，传统开发方式正在被重塑。程序员的工作还能保有多少“人”的价值？在 AI 逐渐掌握编程技能的时代，我们该何去何从。<!-- more --></p>
-<h1 id="cursor-ai">用 Cursor 有感：AI 编程工具带来的冲击</h1>
-<p>最近在工作中尝试使用 Cursor 进行开发，带给我的震撼远超预期。起初，我提高编程效率的方式主要还是依赖 Web 端的 AI 聊天工具，比如 ChatGPT、DeepSeek 等，作为编程的辅助。而当听说有同事已经彻底放弃使用多年的 IntelliJ IDEA，转而投身于 Cursor 这类类 VS Code 的编辑器时，我心里颇为怀疑：<strong>Cursor 真的能比专为 Java 打造的 IDEA 更好用吗？</strong></p>
-<p>毕竟，一堆不熟悉的快捷键、陌生的操作方式、不如 IDEA 直观的代码导航和 Git 管理界面，让我一开始用起来非常别扭。</p>
-<p>然而，真正改变我认知的是最近一段时间。我断断续续开始使用 Cursor 来完成一些具体的开发需求，才真正体会到 AI 编程所带来的<strong>颠覆性冲击</strong>。那一刻，我突然意识到，程序员这个职业的变革，甚至是被部分取代，可能只是时间问题。一股莫名的危机感扑面而来。</p>
-<p>其实很早之前我就试用过 Cursor，但体验并不理想。问题并不在于它生成的代码质量，而在于它<strong>无法正确理解上下文</strong>，经常擅自修改代码结构，甚至屡次犯下我已明确指出的问题。那时的我，只能暂时将它束之高阁。</p>
-<p>直到最近遇到一些简单、重复的开发任务，我再次拿起 Cursor 试试。但这次我换了使用方式：不让它直接写代码，而是让它先<strong>理解需求</strong>，不断对我提问、确认细节；等我确信它理解到位之后，才让它开始动手编码。结果出人意料：它写出的代码不仅<strong>完全符合我的预期</strong>，甚至在风格、规范性上，比我自己写得还更好。</p>
-<p>这让我开始真正思考一个问题：<strong>程序员的未来到底会走向何方？</strong></p>
-<p>AI 的发展速度远超我们的想象，它一方面极大地提高了开发效率，另一方面也在悄然改变这个行业的基本逻辑。当代码变得不再稀缺，当实现思路可以被快速转化成代码，<strong>程序员的价值边界也在不断被重新定义</strong>。</p>
-<p>在这样的时代，程序员要如何保住“饭碗”？我们真正的核心竞争力，应该是什么？当 AI 已能胜任大部分代码工作时，我们赖以为生的“护城河”在哪里？</p>
-<p>这个问题没有标准答案。但我相信：<strong>谁能尽早意识到这一变化，并找到自己的方向，谁就能在这场技术浪潮中活下来，甚至乘风而起。</strong></p>
-<p><em>注：正如文中所述，AI 正在以各种方式融入我们的工作流程——包括本文的润色，也是在 AI 协助下完成的。</em></p>
+<p>AI 工具已经变成我日常工作的一部分了。这篇文章记录一下我目前在用哪些工具，以及一些使用心得。不是什么全面的测评，就是个人体验。<!-- more --></p>
+<h1 id="ai">我在用的 AI 工具，以及一些使用心得</h1>
+<h2 id="cursor">写代码：Cursor</h2>
+<p>之前写过一篇 <a href="../../../06/29/cursor-experience/">Cursor 的使用感受</a>，这里再补充一些。</p>
+<h3 id="_1">现在怎么用</h3>
+<p>用了大半年，Cursor 已经成了我的主力编辑器。主要用法：</p>
+<p><strong>1. 写新代码</strong></p>
+<p>简单的 CRUD、工具类、测试代码，基本让 AI 写，我来审。效率确实高很多。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>我的 prompt 一般是这样：
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>&quot;写一个用户服务，包含增删改查，用 Spring Boot + MyBatis，参考项目里其他服务的风格&quot;
+</code></pre></div>
+<p><strong>2. 改老代码</strong></p>
+<p>这个更好用。选中一段代码，告诉它要改成什么样，比自己改快多了。特别是那种重复性的修改，比如给一堆方法加日志、改参数名之类的。</p>
+<p><strong>3. 问问题</strong></p>
+<p>不懂的代码、不熟悉的库，直接问它。比翻文档快，而且能结合你的项目上下文回答。</p>
+<h3 id="_2">踩过的坑</h3>
+<p><strong>1. 不要完全信任它</strong></p>
+<p>AI 写的代码有时候看起来很对，跑起来有问题。特别是一些边界情况、并发问题，它经常考虑不到。</p>
+<p><strong>所以一定要 review，不能直接用。</strong></p>
+<p><strong>2. 复杂逻辑还是自己想</strong></p>
+<p>涉及到业务逻辑、架构设计的东西，AI 给的方案经常不太行。它不理解你的业务上下文，给出的都是"通用解"。</p>
+<p><strong>3. 有时候不如自己写</strong></p>
+<p>很简单的东西，写 prompt 的时间可能比自己写还长。不用为了用 AI 而用 AI。</p>
+<h2 id="chatgpt-claude">日常问答：ChatGPT / Claude</h2>
+<p>这两个我都在用，各有优缺点。</p>
+<h3 id="chatgptgpt-4">ChatGPT（GPT-4）</h3>
+<p><strong>优点</strong>：
+- 知识面广，什么都能聊
+- 写文案、翻译挺好用
+- 插件生态丰富</p>
+<p><strong>缺点</strong>：
+- 有时候会"一本正经地胡说八道"
+- 代码能力感觉没有 Claude 好
+- 经常绕圈子，不直接回答问题</p>
+<h3 id="claude">Claude</h3>
+<p><strong>优点</strong>：
+- 回答更直接，废话少
+- 代码能力强，解释也清楚
+- 长文本处理好</p>
+<p><strong>缺点</strong>：
+- 有些话题会拒绝回答
+- 知识更新没那么快</p>
+<h3 id="_3">我的用法</h3>
+<ul>
+<li><strong>写代码相关</strong>：优先用 Claude</li>
+<li><strong>写文章、翻译</strong>：用 ChatGPT</li>
+<li><strong>闲聊、头脑风暴</strong>：都可以</li>
+</ul>
+<h2 id="prompt">Prompt 心得</h2>
+<p>用了这么久，总结了一些写 prompt 的经验。</p>
+<h3 id="1">1. 给足上下文</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>❌ 差的 prompt：
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>&quot;写一个登录功能&quot;
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>✅ 好的 prompt：
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>&quot;写一个登录功能，用 Spring Boot，需要：
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>1. 支持用户名+密码登录
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>2. 用 JWT 做 token
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>3. 密码用 BCrypt 加密
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>4. 参考项目里 UserController 的风格&quot;
+</code></pre></div>
+<h3 id="2">2. 明确输出格式</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&quot;用表格对比 MySQL 和 PostgreSQL 的区别&quot;
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>&quot;用中文回答，分点列出&quot;
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>&quot;只给代码，不要解释&quot;
+</code></pre></div>
+<h3 id="3">3. 分步骤来</h3>
+<p>复杂任务不要一次性让它做完，拆成几步：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>第一步：&quot;先帮我分析这个需求，列出要做的事情&quot;
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>第二步：&quot;针对第一点，给出实现方案&quot;
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>第三步：&quot;写出具体代码&quot;
+</code></pre></div>
+<h3 id="4">4. 让它扮演角色</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&quot;你是一个资深的 Java 开发者，帮我 review 这段代码&quot;
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>&quot;假设你是产品经理，这个功能还有什么边界情况需要考虑？&quot;
+</code></pre></div>
+<h3 id="5">5. 不满意就追问</h3>
+<p>AI 第一次回答不好很正常，继续追问：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>&quot;这个方案有什么问题？&quot;
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>&quot;有没有更简单的方法？&quot;
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>&quot;如果并发量很大，这个方案还行吗？&quot;
+</code></pre></div>
+<h2 id="_4">其他工具</h2>
+<h3 id="github-copilot">GitHub Copilot</h3>
+<p>写代码时的自动补全，有时候挺准的。但我现在主要用 Cursor，两个功能有重叠。</p>
+<h3 id="perplexity">Perplexity</h3>
+<p>搜索引擎 + AI，适合搜一些实时信息。比如 "XXX 框架最新版本有什么新特性"，它会帮你总结。</p>
+<h3 id="notebooklm">NotebookLM</h3>
+<p>Google 的工具，可以把一堆文档扔进去，然后针对这些文档问问题。学习新东西的时候挺好用。</p>
+<h3 id="ai-midjourney-dall-e">AI 绘图（Midjourney / DALL-E）</h3>
+<p>偶尔用来生成一些配图、图标。做独立开发的话，不想找设计师可以先用 AI 凑合。</p>
+<h2 id="_5">我的工作流</h2>
+<p>现在一天的工作流大概是这样：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>1. 早上看需求、想方案
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>   - 复杂的需求，先让 AI 帮我分析、头脑风暴
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>2. 写代码
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>   - 简单的让 Cursor 写
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>   - 复杂的自己写，AI 辅助
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>   - 写完让 AI review 一遍
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>3. 遇到问题
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>   - 先问 AI，不行再 Google
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>   - 看不懂的代码、文档，让 AI 解释
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>4. 写文档、周报
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>   - 让 AI 帮忙润色、翻译
+</code></pre></div>
+<p><strong>体感效率提升</strong>：大概 30%-50%？很难精确衡量，但确实快了不少。</p>
+<h2 id="_6">一些思考</h2>
+<h3 id="ai_1">AI 会取代程序员吗？</h3>
+<p>短期不会，但会改变这个职业。</p>
+<p>现在的 AI 更像是一个"很厉害的实习生"——执行力强，但需要你告诉它做什么、怎么做，还要帮它 review。</p>
+<p>但以后呢？不好说。可能 5 年后、10 年后，很多现在需要人写的代码，AI 就能搞定了。</p>
+<h3 id="_7">应该焦虑吗？</h3>
+<p>有点焦虑是正常的，但也没必要太焦虑。</p>
+<p>我的想法是：<strong>与其担心被取代，不如先把 AI 用好</strong>。会用 AI 的程序员，效率比不会用的高很多。至少目前，这是一个优势而不是威胁。</p>
+<h3 id="_8">什么能力更重要了？</h3>
+<ul>
+<li><strong>理解需求的能力</strong>：知道要做什么，比知道怎么做更重要</li>
+<li><strong>判断力</strong>：AI 给的方案对不对、好不好，需要你来判断</li>
+<li><strong>学习能力</strong>：AI 工具在快速迭代，要跟上</li>
+<li><strong>沟通能力</strong>：需求、方案还是要跟人聊</li>
+</ul>
+<h2 id="_9">最后</h2>
+<p>AI 工具变化很快，这篇文章里写的，可能过几个月就过时了。</p>
+<p>但有一点应该不会变：<strong>工具是用来解决问题的，不是用来炫技的</strong>。好用就用，不好用就换，没必要为了"跟上潮流"而用。</p>
+<p>如果你有什么好用的 AI 工具，也欢迎推荐给我。</p>
+<hr />
+<p><em>最后更新：2025 年 11 月</em></p>
 
 
 
