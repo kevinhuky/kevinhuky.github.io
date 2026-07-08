@@ -1,40 +1,33 @@
-# DevHiker's Blog
+# KevinHu
 
-> 一个 Java 程序员的个人博客
+一个极简静态博客，文章源文件放在 `docs/blog/posts`，通过 `build.py` 生成到 `site`。
 
-🔗 [https://devhiker.xyz](https://devhiker.xyz)
+## 本地预览
 
-## 关于我
+```powershell
+python build.py
+python -m http.server 8000 -d site
+```
 
-我是 KevinHu，一个写 Java 的后端程序员。
+然后访问：
 
-对独立开发感兴趣，想自己做点产品出来。同时也是个极客，喜欢折腾各种技术。最近在积极拥抱 AI，探索它如何改变我们写代码的方式。
+```text
+http://127.0.0.1:8000
+```
 
-## 为什么写博客
+## 写文章
 
-写博客主要是为了逼自己学习。
+在 `docs/blog/posts` 下新增 Markdown 文件，保留类似下面的 front matter：
 
-很多东西看过就忘，但如果要写出来给别人看，就得真正搞懂。输出倒逼输入，这招对我挺有效的。
-
-另外，也想记录一下自己的成长轨迹。几年后回头看，应该会挺有意思的。
-
-## 我的项目
-
-- **[4Q Task](https://4qtask.devhiker.xyz/)** - 四象限任务管理工具
-
-## 博客内容
-
-- **技术笔记**：Java、Spring Boot、MySQL、Redis 这些后端技术的学习记录
-- **踩坑日记**：工作中遇到的问题和解决方案
-- **独立开发**：关于做产品的思考和尝试
-- **AI 探索**：各种 AI 工具的使用心得
-- **读书笔记**：技术书籍和其他书的阅读记录
-
-## 联系
-
-- GitHub: [@kevinhuky](https://github.com/kevinhuky)
-- Email: kangyinghuu@gmail.com
-
+```markdown
 ---
+title: 文章标题
+draft: false
+date: 2026-01-01
+slug: post-slug
+categories:
+  - Engineering
+---
+```
 
-*持续更新中...*
+`<!-- more -->` 前面的内容会作为首页摘要。

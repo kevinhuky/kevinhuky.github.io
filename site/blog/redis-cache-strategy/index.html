@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Redis 是最流行的内存数据库之一，广泛用于缓存、会话管理、排行榜等场景。本文深入讲解 Redis 缓存策略、数据结构选型、以及缓存穿透、击穿、雪崩等常见问题的解决方案。">
+  <title>Redis 缓存策略与常见问题解决方案 - Pingzhi HU</title>
+  <link rel="canonical" href="https://devhiker.xyz/blog/redis-cache-strategy/">
+  <link rel="alternate" type="application/rss+xml" title="Pingzhi HU" href="/rss.xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="side-nav" aria-label="Blog navigation">
+    <a href="/archive/">Post Archive</a>
+  </aside>
+  <main class="page">
+    <header class="site-header">
+      <h1><a href="/">Pingzhi HU</a></h1>
+      <p>一个 Java 程序员的个人博客</p>
+    </header>
+<article class="post">
+  <header class="post-header">
+    <h1>Redis 缓存策略与常见问题解决方案</h1>
+    <div class="meta">Posted 2025-09-01 in <a href="/category/engineering/">Engineering</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
+  </header>
+  <div class="post-body">
+<p>Redis 是最流行的内存数据库之一，广泛用于缓存、会话管理、排行榜等场景。本文深入讲解 Redis 缓存策略、数据结构选型、以及缓存穿透、击穿、雪崩等常见问题的解决方案。</p>
+<h2>一、Redis 简介</h2>
+<h3>1.1 什么是 Redis？</h3>
+<p>Redis（Remote Dictionary Server）是一个开源的<strong>内存数据结构存储系统</strong>，可以用作数据库、缓存和消息中间件。</p>
+<p><strong>核心特点</strong>：</p>
+<ul>
+<li><strong>高性能</strong>：基于内存，读写速度极快（10万+ QPS）</li>
+<li><strong>丰富的数据结构</strong>：String、Hash、List、Set、ZSet 等</li>
+<li><strong>持久化</strong>：支持 RDB 和 AOF 两种持久化方式</li>
+<li><strong>高可用</strong>：支持主从复制、哨兵、集群模式</li>
+<li><strong>原子操作</strong>：所有操作都是原子的</li>
+</ul>
+<h3>1.2 Redis vs Memcached</h3>
+<table><thead><tr>
+<th>特性</th>
+<th>Redis</th>
+<th>Memcached</th>
+</tr></thead><tbody>
+<tr>
+<td>数据结构</td>
+<td>丰富（5种+）</td>
+<td>仅 String</td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>集群</td>
+<td>原生支持</td>
+<td>需客户端实现</td>
+</tr>
+<tr>
+<td>线程模型</td>
+<td>单线程（6.0 多线程IO）</td>
+<td>多线程</td>
+</tr>
+<tr>
+<td>内存管理</td>
+<td>自主实现</td>
+<td>Slab Allocation</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>二、Redis 数据结构与应用场景</h2>
+<h3>2.1 String（字符串）</h3>
+<p>最基本的数据类型，可以存储字符串、整数或浮点数。</p>
+<pre><code class="language-bash"># 基本操作
+SET user:1:name &quot;张三&quot;
+GET user:1:name
+
+# 计数器
+INCR article:1:views      # 文章阅读量
+INCRBY user:1:points 10   # 用户积分增加
+
+# 分布式锁
+SET lock:order:123 &quot;uuid&quot; NX EX 30  # 30秒过期的锁
+
+# 缓存对象（JSON）
+SET user:1 &#x27;{&quot;id&quot;:1,&quot;name&quot;:&quot;张三&quot;,&quot;age&quot;:25}&#x27;</code></pre>
+<p><strong>应用场景</strong>：缓存、计数器、分布式锁、Session 存储</p>
+<h3>2.2 Hash（哈希）</h3>
+<p>键值对集合，适合存储对象。</p>
+<pre><code class="language-bash"># 存储用户信息
+HSET user:1 name &quot;张三&quot; age 25 email &quot;zhangsan@example.com&quot;
+HGET user:1 name
+HGETALL user:1
+
+# 购物车
+HSET cart:user:1 product:1001 2  # 商品1001，数量2
+HINCRBY cart:user:1 product:1001 1  # 数量+1
+HDEL cart:user:1 product:1001  # 删除商品</code></pre>
+<p><strong>应用场景</strong>：对象存储、购物车、用户属性</p>
+<h3>2.3 List（列表）</h3>
+<p>双向链表，支持从两端操作。</p>
+<pre><code class="language-bash"># 消息队列
+LPUSH queue:email &quot;message1&quot;  # 生产者
+RPOP queue:email              # 消费者
+BRPOP queue:email 30          # 阻塞式消费，30秒超时
+
+# 最新列表
+LPUSH news:latest &quot;article:1001&quot;
+LTRIM news:latest 0 99  # 只保留最新100条
+LRANGE news:latest 0 9  # 获取最新10条</code></pre>
+<p><strong>应用场景</strong>：消息队列、最新列表、时间线</p>
+<h3>2.4 Set（集合）</h3>
+<p>无序且唯一的字符串集合。</p>
+<pre><code class="language-bash"># 标签系统
+SADD article:1:tags &quot;Java&quot; &quot;Redis&quot; &quot;后端&quot;
+SMEMBERS article:1:tags  # 获取所有标签
+
+# 共同关注
+SADD user:1:follows 2 3 4 5
+SADD user:2:follows 3 4 6 7
+SINTER user:1:follows user:2:follows  # 共同关注：3, 4
+
+# 抽奖
+SADD lottery:1 user:1 user:2 user:3
+SRANDMEMBER lottery:1 2  # 随机抽取2人
+SPOP lottery:1           # 抽取并移除（不可重复中奖）</code></pre>
+<p><strong>应用场景</strong>：标签、共同好友、去重、抽奖</p>
+<h3>2.5 ZSet（有序集合）</h3>
+<p>带分数的有序集合，按分数排序。</p>
+<pre><code class="language-bash"># 排行榜
+ZADD leaderboard 1000 &quot;user:1&quot; 800 &quot;user:2&quot; 1200 &quot;user:3&quot;
+ZREVRANGE leaderboard 0 9 WITHSCORES  # Top 10
+ZRANK leaderboard &quot;user:1&quot;            # 获取排名
+ZINCRBY leaderboard 50 &quot;user:1&quot;       # 增加分数
+
+# 延迟队列
+ZADD delay:queue 1705123456 &quot;task:1&quot;  # 分数为执行时间戳
+ZRANGEBYSCORE delay:queue 0 1705123456  # 获取到期任务</code></pre>
+<p><strong>应用场景</strong>：排行榜、延迟队列、范围查询</p>
+<hr>
+<h2>三、缓存策略</h2>
+<h3>3.1 Cache Aside（旁路缓存）</h3>
+<p>最常用的缓存策略，应用程序同时维护缓存和数据库。</p>
+<pre><code class="language-">读取流程：
+1. 先读缓存
+2. 缓存命中 → 返回数据
+3. 缓存未命中 → 读数据库 → 写入缓存 → 返回数据
+
+写入流程：
+1. 更新数据库
+2. 删除缓存（不是更新缓存！）</code></pre>
+<pre><code class="language-java">// 读取
+public User getUser(Long userId) {
+    String key = &quot;user:&quot; + userId;
+    
+    // 1. 查缓存
+    String cached = redis.get(key);
+    if (cached != null) {
+        return JSON.parseObject(cached, User.class);
+    }
+    
+    // 2. 查数据库
+    User user = userMapper.selectById(userId);
+    if (user != null) {
+        // 3. 写缓存
+        redis.setex(key, 3600, JSON.toJSONString(user));
+    }
+    return user;
+}
+
+// 写入
+@Transactional
+public void updateUser(User user) {
+    // 1. 更新数据库
+    userMapper.updateById(user);
+    // 2. 删除缓存
+    redis.del(&quot;user:&quot; + user.getId());
+}</code></pre>
+<p><strong>为什么删除缓存而不是更新缓存？</strong></p>
+<ol>
+<li>避免并发下的数据不一致</li>
+<li>懒加载思想，下次读取时再更新</li>
+</ol>
+<h3>3.2 Read/Write Through</h3>
+<p>应用程序只与缓存交互，缓存负责与数据库同步。</p>
+<pre><code class="language-">读取：缓存未命中时，缓存自动加载数据库数据
+写入：写缓存，缓存同步写入数据库</code></pre>
+<p>适合缓存中间件支持此模式的场景。</p>
+<h3>3.3 Write Behind（异步写回）</h3>
+<p>写入时只更新缓存，异步批量写入数据库。</p>
+<pre><code class="language-">优点：写入性能极高
+缺点：可能丢数据（缓存宕机时）</code></pre>
+<p>适合写入频繁、允许少量数据丢失的场景（如计数器）。</p>
+<hr>
+<h2>四、缓存常见问题</h2>
+<h3>4.1 缓存穿透</h3>
+<p><strong>定义</strong>：查询不存在的数据，缓存未命中，每次都查数据库。</p>
+<pre><code class="language-">攻击者：大量请求不存在的 ID（如负数、超大数）
+结果：数据库压力骤增</code></pre>
+<p><strong>解决方案</strong>：</p>
+<h4>方案一：缓存空值</h4>
+<pre><code class="language-java">public User getUser(Long userId) {
+    String key = &quot;user:&quot; + userId;
+    String cached = redis.get(key);
+    
+    // 空值也认为是命中
+    if (cached != null) {
+        return &quot;NULL&quot;.equals(cached) ? null : JSON.parseObject(cached, User.class);
+    }
+    
+    User user = userMapper.selectById(userId);
+    if (user != null) {
+        redis.setex(key, 3600, JSON.toJSONString(user));
+    } else {
+        // 缓存空值，设置较短过期时间
+        redis.setex(key, 300, &quot;NULL&quot;);
+    }
+    return user;
+}</code></pre>
+<h4>方案二：布隆过滤器</h4>
+<pre><code class="language-java">// 初始化时加载所有存在的 ID 到布隆过滤器
+BloomFilter&lt;Long&gt; bloomFilter = BloomFilter.create(
+    Funnels.longFunnel(), 1000000, 0.01  // 百万数据，1%误判率
+);
+
+// 加载数据
+List&lt;Long&gt; allUserIds = userMapper.selectAllIds();
+allUserIds.forEach(bloomFilter::put);
+
+// 查询时先判断
+public User getUser(Long userId) {
+    // 布隆过滤器判断，不存在则一定不存在
+    if (!bloomFilter.mightContain(userId)) {
+        return null;
+    }
+    // 正常查询逻辑...
+}</code></pre>
+<h3>4.2 缓存击穿</h3>
+<p><strong>定义</strong>：热点 Key 过期瞬间，大量请求同时查数据库。</p>
+<pre><code class="language-">场景：某热门商品缓存过期
+结果：瞬间大量请求打到数据库</code></pre>
+<p><strong>解决方案</strong>：</p>
+<h4>方案一：互斥锁</h4>
+<pre><code class="language-java">public User getUser(Long userId) {
+    String key = &quot;user:&quot; + userId;
+    String cached = redis.get(key);
+    
+    if (cached != null) {
+        return JSON.parseObject(cached, User.class);
+    }
+    
+    // 获取分布式锁
+    String lockKey = &quot;lock:user:&quot; + userId;
+    boolean locked = redis.setnx(lockKey, &quot;1&quot;, 10);
+    
+    try {
+        if (locked) {
+            // 获取锁成功，查询数据库
+            User user = userMapper.selectById(userId);
+            redis.setex(key, 3600, JSON.toJSONString(user));
+            return user;
+        } else {
+            // 获取锁失败，等待后重试
+            Thread.sleep(100);
+            return getUser(userId);
+        }
+    } finally {
+        if (locked) {
+            redis.del(lockKey);
+        }
+    }
+}</code></pre>
+<h4>方案二：逻辑过期</h4>
+<pre><code class="language-java">@Data
+public class CacheData {
+    private Object data;
+    private long expireTime;  // 逻辑过期时间
+}
+
+public User getUser(Long userId) {
+    String key = &quot;user:&quot; + userId;
+    CacheData cacheData = redis.get(key);
+    
+    if (cacheData == null) {
+        return null;  // 缓存预热时加载
+    }
+    
+    // 未过期，直接返回
+    if (System.currentTimeMillis() &lt; cacheData.getExpireTime()) {
+        return (User) cacheData.getData();
+    }
+    
+    // 已过期，异步更新缓存
+    if (tryLock(key)) {
+        executor.submit(() -&gt; {
+            try {
+                User user = userMapper.selectById(userId);
+                CacheData newData = new CacheData(user, System.currentTimeMillis() + 3600000);
+                redis.set(key, newData);
+            } finally {
+                unlock(key);
+            }
+        });
+    }
+    
+    // 返回旧数据
+    return (User) cacheData.getData();
+}</code></pre>
+<h3>4.3 缓存雪崩</h3>
+<p><strong>定义</strong>：大量缓存同时过期，或 Redis 宕机，导致数据库压力骤增。</p>
+<pre><code class="language-">场景1：批量导入数据，设置相同过期时间
+场景2：Redis 集群故障</code></pre>
+<p><strong>解决方案</strong>：</p>
+<h4>方案一：过期时间加随机值</h4>
+<pre><code class="language-java">// 避免同时过期
+int baseExpire = 3600;
+int randomExpire = new Random().nextInt(600);  // 0-600秒随机
+redis.setex(key, baseExpire + randomExpire, value);</code></pre>
+<h4>方案二：多级缓存</h4>
+<pre><code class="language-">请求 → 本地缓存(Caffeine) → Redis → 数据库</code></pre>
+<pre><code class="language-java">@Service
+public class UserService {
+    
+    // 本地缓存
+    private final Cache&lt;Long, User&gt; localCache = Caffeine.newBuilder()
+            .maximumSize(10000)
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .build();
+    
+    public User getUser(Long userId) {
+        // 1. 本地缓存
+        User user = localCache.getIfPresent(userId);
+        if (user != null) {
+            return user;
+        }
+        
+        // 2. Redis 缓存
+        String key = &quot;user:&quot; + userId;
+        String cached = redis.get(key);
+        if (cached != null) {
+            user = JSON.parseObject(cached, User.class);
+            localCache.put(userId, user);
+            return user;
+        }
+        
+        // 3. 数据库
+        user = userMapper.selectById(userId);
+        if (user != null) {
+            redis.setex(key, 3600, JSON.toJSONString(user));
+            localCache.put(userId, user);
+        }
+        return user;
+    }
+}</code></pre>
+<h4>方案三：熔断降级</h4>
+<pre><code class="language-java">// 使用 Sentinel 或 Hystrix
+@SentinelResource(value = &quot;getUser&quot;, fallback = &quot;getUserFallback&quot;)
+public User getUser(Long userId) {
+    // 正常逻辑
+}
+
+public User getUserFallback(Long userId) {
+    // 降级逻辑：返回默认值或友好提示
+    return new User().setName(&quot;系统繁忙&quot;);
+}</code></pre>
+<hr>
+<h2>五、缓存一致性</h2>
+<h3>5.1 延迟双删</h3>
+<p>确保缓存与数据库最终一致。</p>
+<pre><code class="language-java">@Transactional
+public void updateUser(User user) {
+    String key = &quot;user:&quot; + user.getId();
+    
+    // 1. 先删缓存
+    redis.del(key);
+    
+    // 2. 更新数据库
+    userMapper.updateById(user);
+    
+    // 3. 延迟再删一次（处理并发读导致的脏数据）
+    executor.schedule(() -&gt; redis.del(key), 500, TimeUnit.MILLISECONDS);
+}</code></pre>
+<h3>5.2 Canal 订阅 Binlog</h3>
+<p>通过监听 MySQL Binlog 实现缓存更新。</p>
+<pre><code class="language-">MySQL → Binlog → Canal → MQ → 缓存更新服务 → Redis</code></pre>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>解耦应用程序与缓存更新逻辑</li>
+<li>保证最终一致性</li>
+<li>支持增量同步</li>
+</ul>
+<hr>
+<h2>六、Redis 高可用</h2>
+<h3>6.1 主从复制</h3>
+<pre><code class="language-">Master(写) → Slave1(读)
+          → Slave2(读)</code></pre>
+<pre><code class="language-bash"># 从节点配置
+replicaof 192.168.1.100 6379</code></pre>
+<h3>6.2 哨兵模式（Sentinel）</h3>
+<p>自动故障转移。</p>
+<pre><code class="language-">     ┌──────────┐
+     │ Sentinel │ ← 监控
+     └──────────┘
+           │
+    ┌──────┴──────┐
+    ▼             ▼
+┌────────┐   ┌────────┐
+│ Master │   │ Slave  │
+└────────┘   └────────┘
+    故障 ↓        ↑ 升级
+         └────────┘</code></pre>
+<h3>6.3 集群模式（Cluster）</h3>
+<p>数据分片，水平扩展。</p>
+<pre><code class="language-">┌─────────────────────────────────────┐
+│           16384 个槽位               │
+├───────────┬───────────┬─────────────┤
+│ 0-5460    │ 5461-10922│ 10923-16383 │
+│  Node 1   │  Node 2   │   Node 3    │
+│ (Master)  │ (Master)  │  (Master)   │
+│    ↓      │    ↓      │     ↓       │
+│  Slave    │  Slave    │   Slave     │
+└───────────┴───────────┴─────────────┘</code></pre>
+<hr>
+<h2>七、Redis 性能优化</h2>
+<h3>7.1 键设计规范</h3>
+<pre><code class="language-bash"># ✅ 好的键名
+user:1001:profile
+order:2024:01:20:123456
+cache:product:category:electronics
+
+# ❌ 差的键名
+u1001        # 太短，含义不明
+user_profile_for_user_id_1001  # 太长
+user:*:data  # 避免使用通配符</code></pre>
+<h3>7.2 避免大 Key</h3>
+<pre><code class="language-bash"># 检测大 Key
+redis-cli --bigkeys
+
+# 大 Key 的危害
+# - 网络传输慢
+# - 阻塞其他请求
+# - 主从同步延迟
+
+# 解决方案：拆分
+# Hash 拆分
+HSET user:1:basic name &quot;张三&quot; age 25
+HSET user:1:detail address &quot;xxx&quot; bio &quot;xxx&quot;
+
+# List 拆分
+LPUSH user:1:orders:2024 ...
+LPUSH user:1:orders:2023 ...</code></pre>
+<h3>7.3 管道（Pipeline）</h3>
+<p>批量操作减少网络往返。</p>
+<pre><code class="language-java">// ❌ 多次网络请求
+for (int i = 0; i &lt; 1000; i++) {
+    redis.set(&quot;key:&quot; + i, &quot;value&quot;);
+}
+
+// ✅ 使用 Pipeline
+Pipeline pipeline = redis.pipelined();
+for (int i = 0; i &lt; 1000; i++) {
+    pipeline.set(&quot;key:&quot; + i, &quot;value&quot;);
+}
+pipeline.sync();  // 一次网络请求</code></pre>
+<h3>7.4 Lua 脚本</h3>
+<p>保证原子性操作。</p>
+<pre><code class="language-lua">-- 限流脚本
+local key = KEYS[1]
+local limit = tonumber(ARGV[1])
+local window = tonumber(ARGV[2])
+
+local current = redis.call(&#x27;GET&#x27;, key)
+if current and tonumber(current) &gt;= limit then
+    return 0  -- 超过限制
+end
+
+current = redis.call(&#x27;INCR&#x27;, key)
+if tonumber(current) == 1 then
+    redis.call(&#x27;EXPIRE&#x27;, key, window)
+end
+return 1  -- 允许通过</code></pre>
+<pre><code class="language-java">// Java 调用
+String script = &quot;...&quot;;
+Long result = redis.eval(script, 
+    Collections.singletonList(&quot;rate:user:1&quot;), 
+    Arrays.asList(&quot;10&quot;, &quot;60&quot;));  // 60秒内限制10次</code></pre>
+<hr>
+<h2>八、实战案例</h2>
+<h3>8.1 分布式锁</h3>
+<pre><code class="language-java">public class RedisLock {
+    private static final String LOCK_SUCCESS = &quot;OK&quot;;
+    private static final String RELEASE_SCRIPT = 
+        &quot;if redis.call(&#x27;get&#x27;, KEYS[1]) == ARGV[1] then &quot; +
+        &quot;   return redis.call(&#x27;del&#x27;, KEYS[1]) &quot; +
+        &quot;else &quot; +
+        &quot;   return 0 &quot; +
+        &quot;end&quot;;
+    
+    public boolean tryLock(String lockKey, String requestId, int expireTime) {
+        String result = redis.set(lockKey, requestId, &quot;NX&quot;, &quot;EX&quot;, expireTime);
+        return LOCK_SUCCESS.equals(result);
+    }
+    
+    public boolean releaseLock(String lockKey, String requestId) {
+        Long result = redis.eval(RELEASE_SCRIPT, 
+            Collections.singletonList(lockKey),
+            Collections.singletonList(requestId));
+        return result == 1L;
+    }
+}</code></pre>
+<h3>8.2 限流器</h3>
+<pre><code class="language-java">// 滑动窗口限流
+public boolean isAllowed(String userId, int maxRequests, int windowSeconds) {
+    String key = &quot;rate:&quot; + userId;
+    long now = System.currentTimeMillis();
+    long windowStart = now - windowSeconds * 1000;
+    
+    // 使用 ZSet 实现滑动窗口
+    Pipeline pipeline = redis.pipelined();
+    pipeline.zremrangeByScore(key, 0, windowStart);  // 移除窗口外的请求
+    pipeline.zadd(key, now, String.valueOf(now));    // 添加当前请求
+    pipeline.zcard(key);                              // 统计窗口内请求数
+    pipeline.expire(key, windowSeconds);              // 设置过期时间
+    List&lt;Object&gt; results = pipeline.syncAndReturnAll();
+    
+    Long count = (Long) results.get(2);
+    return count &lt;= maxRequests;
+}</code></pre>
+<h3>8.3 排行榜</h3>
+<pre><code class="language-java">// 更新分数
+public void updateScore(String leaderboardKey, String userId, double score) {
+    redis.zincrby(leaderboardKey, score, userId);
+}
+
+// 获取 Top N
+public List&lt;RankItem&gt; getTopN(String leaderboardKey, int n) {
+    Set&lt;Tuple&gt; tuples = redis.zrevrangeWithScores(leaderboardKey, 0, n - 1);
+    return tuples.stream()
+        .map(t -&gt; new RankItem(t.getElement(), t.getScore()))
+        .collect(Collectors.toList());
+}
+
+// 获取用户排名
+public Long getUserRank(String leaderboardKey, String userId) {
+    return redis.zrevrank(leaderboardKey, userId);
+}</code></pre>
+<hr>
+<h2>九、总结</h2>
+<h3>缓存策略选择</h3>
+<table><thead><tr>
+<th>场景</th>
+<th>推荐策略</th>
+</tr></thead><tbody>
+<tr>
+<td>读多写少</td>
+<td>Cache Aside</td>
+</tr>
+<tr>
+<td>写多读少</td>
+<td>Write Behind</td>
+</tr>
+<tr>
+<td>一致性要求高</td>
+<td>Read/Write Through</td>
+</tr>
+</tbody></table>
+<h3>问题解决速查</h3>
+<table><thead><tr>
+<th>问题</th>
+<th>解决方案</th>
+</tr></thead><tbody>
+<tr>
+<td>缓存穿透</td>
+<td>空值缓存 / 布隆过滤器</td>
+</tr>
+<tr>
+<td>缓存击穿</td>
+<td>互斥锁 / 逻辑过期</td>
+</tr>
+<tr>
+<td>缓存雪崩</td>
+<td>随机过期 / 多级缓存 / 熔断降级</td>
+</tr>
+<tr>
+<td>数据一致性</td>
+<td>延迟双删 / Canal 订阅</td>
+</tr>
+</tbody></table>
+<h3>核心要点</h3>
+<ol>
+<li><strong>选择合适的数据结构</strong>：不同场景使用不同类型</li>
+<li><strong>设计合理的缓存策略</strong>：根据业务特点选择</li>
+<li><strong>处理好缓存问题</strong>：穿透、击穿、雪崩</li>
+<li><strong>保证高可用</strong>：主从、哨兵、集群</li>
+<li><strong>持续优化性能</strong>：Pipeline、Lua、避免大 Key</li>
+</ol>
+<hr>
+<blockquote><p><strong>参考资料</strong>： - <a href="https://redis.io/documentation">Redis 官方文档</a> - 《Redis 设计与实现》 - 《Redis 深度历险》</p></blockquote>
+  </div>
+</article>
+    <footer class="site-footer">
+      <a href="/">Home</a>
+      <a href="/archive/">Archive</a>
+      <a href="/rss.xml">RSS</a>
+      <a href="mailto:kangyinghuu@gmail.com">Email</a>
+    </footer>
+  </main>
+</body>
+</html>

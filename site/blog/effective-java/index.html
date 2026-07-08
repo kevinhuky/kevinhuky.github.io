@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="&quot;对《Effective Java》进行阅读提炼，把书读薄，聚焦关键实践与原则，形成便于回顾和应用的笔记。&quot;">
+  <title>《Effective Java》阅读总结 - Pingzhi HU</title>
+  <link rel="canonical" href="https://devhiker.xyz/blog/effective-java/">
+  <link rel="alternate" type="application/rss+xml" title="Pingzhi HU" href="/rss.xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="side-nav" aria-label="Blog navigation">
+    <a href="/archive/">Post Archive</a>
+  </aside>
+  <main class="page">
+    <header class="site-header">
+      <h1><a href="/">Pingzhi HU</a></h1>
+      <p>一个 Java 程序员的个人博客</p>
+    </header>
+<article class="post">
+  <header class="post-header">
+    <h1>《Effective Java》阅读总结</h1>
+    <div class="meta">Posted 2025-09-09 in <a href="/category/%E9%98%85%E8%AF%BB/">阅读</a></div>
+  </header>
+  <div class="post-body">
+<p>"对《Effective Java》进行阅读提炼，把书读薄，聚焦关键实践与原则，形成便于回顾和应用的笔记。"</p>
+<h2>Methods（方法）</h2>
+<h3>第 49 条：检查参数的有效性</h3>
+<blockquote><p><strong>核心原则：错误越早发现越好。对于所有公开方法，要在方法体开始处，立即、严格地检查参数的有效性，并用文档清晰地标明检查规则，这是构建健壮、可靠代码的基础。</strong></p></blockquote>
+<hr>
+<h4>一、为什么必须检查？</h4>
+<ul>
+<li><strong>防止后期崩溃</strong>：不在方法开头检查无效参数，方法可能会在执行到一半时因一个莫名其妙的异常而失败。</li>
+<li><strong>防止错误结果</strong>：最坏的情况是，方法不抛异常，但默默地返回了一个错误的结果。</li>
+<li><strong>保护对象状态</strong>：无效参数可能导致对象进入一种“不健康”的永久错误状态，成为潜伏的 bug。</li>
+</ul>
+<hr>
+<h4>二、怎么检查？</h4>
+<ol>
+<li><strong>公开 API (<code>public</code>/<code>protected</code>)</strong>：</li>
+</ol>
+<ul>
+<li><strong>非空检查</strong>：用 <code>Objects.requireNonNull(param, "message")</code>。</li>
+<li><strong>索引/范围检查</strong>：用 <code>Objects.checkIndex()</code> 等（Java 9+）。</li>
+<li><strong>文档</strong>：在 Javadoc 中必须用 <code>@throws</code> 标签明确写出参数无效时会抛哪种异常（如 <code>IllegalArgumentException</code>, <code>NullPointerException</code>）。这是方法契约的一部分。</li>
+</ul>
+<ol>
+<li><strong>内部方法 (<code>private</code>/包级私有)</strong>：</li>
+</ol>
+<ul>
+<li><strong>用断言 <code>assert</code></strong>：<code>assert param != null;</code>。断言可以在生产环境关闭，无性能损耗，适合检查那些“理论上不应该发生”的错误。</li>
+</ul>
+<ol>
+<li><strong>构造函数</strong>：</li>
+</ol>
+<ul>
+<li><strong>检查是强制的</strong>：构造函数的参数检查比普通方法更重要，因为它决定了对象“出生”时的状态是否健康。</li>
+</ul>
+<hr>
+<h4>三、什么时候可以不检查？</h4>
+<ul>
+<li><strong>计算过程隐式检查</strong>：如果方法的核心逻辑本身就会进行检查（例如，<code>Collections.sort(List)</code> 自然会检查元素是否可比较），则无需多此一举。</li>
+<li><strong>性能极端敏感</strong>：当检查成本过高，且不值得时（非常罕见）。</li>
+</ul>
+<h3>第 50 条：必要时进行防御性拷贝</h3>
+<blockquote><p><strong>核心原则：捍卫封装，杜绝"后门"。一个类的内部状态必须由它自己完全掌控，这是面向对象封装的基石。我们必须假设类的调用者是“不怀好意”的，会想尽办法破坏类的内部一致性（不变性）。</strong></p></blockquote>
+<p><strong>根本威胁</strong>：当类的成员变量是<strong>可变对象</strong>（如 <code>Date</code>、集合、数组、自定义 POJO 等）时，将这些对象的引用传入或传出类，就相当于给外部代码留下了修改类内部状态的"后门"。</p>
+<h4>一、两大攻击途径</h4>
+<p>客户端代码可以通过两种方式轻易地攻破类的封装：</p>
+<ol>
+<li><strong>构造器攻击（入口渗透）</strong>：在创建对象后，客户端通过保留对传入构造器的可变参数的引用，从外部修改对象的内部状态。</li>
+<li><strong>访问器攻击（出口泄漏）</strong>：客户端通过 getter 方法获取到内部可变对象的引用，然后直接修改这个对象，从而改变类的内部状态。</li>
+</ol>
+<h4>二、防御策略</h4>
+<ol>
+<li><strong>防御构造器：拷贝"传入"的可变对象</strong></li>
+</ol>
+<p>在构造器中，决不能直接保存外部传入的可变对象的引用。必须创建并保存该对象的一个全新副本。</p>
+<p><strong>具体操作：</strong></p>
+<ul>
+<li>创建副本：使用构造函数或其他可靠的拷贝方式。</li>
+<li>先拷贝，后检查：拷贝操作应在参数有效性检查之前完成。这可以防御在检查和拷贝的微小时差内，参数被其他线程修改的 TOCTOU 攻击。</li>
+<li>避开clone()的陷阱：</li>
+<li><strong>绝对不要对参数调用 <code>clone()</code> 方法进行拷贝</strong>。因为你无法保证传入的是不是一个恶意子类，其重写的 <code>clone()</code> 方法可能会在你不知情的情况下，“窃取”你内部对象的引用，导致防御失效。</li>
+<li><strong>唯一例外</strong>：<code>数组</code>。数组的 <code>clone()</code> 是安全的，因为它无法被重写。</li>
+</ul>
+<pre><code class="language-java">    // 正确防御：使用构造函数创建副本
+    public Period(Date start, Date end) {
+        this.start = new Date(start.getTime()); // 创建全新的、隔离的Date对象
+        this.end = new Date(end.getTime());     // getTime()返回long，是安全的
+    
+        if (this.start.compareTo(this.end) &gt; 0) {
+            throw new IllegalArgumentException(&quot;...&quot;);
+        }
+    }</code></pre>
+<ol>
+<li><strong>防御访问器（Getter）：拷贝"传出"的可变对象</strong></li>
+</ol>
+<p>当 getter 方法需要返回内部的可变字段时，绝不能直接返回该字段的引用。必须返回该字段的一个副本。</p>
+<p><strong>具体操作：</strong></p>
+<ul>
+<li>对于集合，可以返回一个副本（<code>new ArrayList&lt;&gt;(this.list)</code>），或者更好的选择是返回一个<strong>不可修改的视图</strong> (<code>Collections.unmodifiableList(this.list)</code>)，后者性能更好且意图更明确。</li>
+<li>对于其他可变对象，返回其副本。</li>
+</ul>
+<h4>三、适用场景与代价</h4>
+<ul>
+<li><strong>问题普遍性</strong>：此问题及其常见。除了 Date，最需要警惕的是集合（List，Map等）、数组（[]）、字节数组（byte[]）以及任何自定义的可变类。</li>
+<li><strong>代价</strong>：防御性拷贝有性能开销，但为了换取程序的健壮和安全性，这通常是必要的代价。</li>
+<li><strong>最佳实践</strong>：优先使用不可变对象（如 String，java.time 包下的类，List.of() 创建的列表）作为类的组件。这可以从根本上消除防御性拷贝的需要。</li>
+</ul>
+<blockquote><p><strong>一句话总结：为了维护类的封装，任何跨越类边界（构造器和访问器）传递的可变对象都必须被拷贝。这是构建健康、安全和可维护 Java 类的基本功。</strong></p></blockquote>
+<h3>第 51 条：仔细设计方法签名</h3>
+<blockquote><p>API 的设计应该追求"易于学习、易于使用、不易误用"。方法签名是 API 与开发者交互的第一道门，一个精心设计的签名能够极大地提升代码的可读性、可维护性和健壮性。</p></blockquote>
+<h4>设计原则</h4>
+<ol>
+<li><strong>谨慎选择方法名称</strong></li>
+</ol>
+<ul>
+<li>力求清晰，而非简洁：一个好的方法名应该能准确描述方法的功能</li>
+<li>遵守标准命名约定：遵循 Java 社区的通用规范，例如使用 camelCase</li>
+<li>保持风格一致：与项目或包中现有的其他 API 命名风格保持统一，降低学习成本</li>
+</ul>
+<ol>
+<li><strong>避免过长的参数列表</strong></li>
+</ol>
+<p>长参数列表会导致代码难以阅读，并且调用者容易混淆参数顺序（当出现多个同类型参数时），导致错误；参数数量尽量控制在四个或者更少。</p>
+<p>常用的解决方案：</p>
+<ul>
+<li>分解方法：将一个复杂的方法拆分成多个功能更单一的小方法</li>
+<li>创建辅助类（Helper Class）：将所有参数都封装到一个独立的静态成员类中，方法只需要接受这个类的单个对象</li>
+<li>使用构建者模式（Builder pattern）：当一个对象有多个构造参数，尤其是其中很多是可选的时候，Builder 模式是 Helper Class 的理想替代方案</li>
+</ul>
+<ol>
+<li><strong>参数类型：优先使用接口，而非具体实现</strong></li>
+</ol>
+<p>例如使用List，而非ArrayList，可以大大提升方法的灵活性</p>
+<ol>
+<li><strong>避免使用布尔值作为参数</strong></li>
+</ol>
+<p>使用 boolean 参数通常会降低代码的可读性，因为调用者很难从 true 或 false 这样的字面量上理解其确切含义</p>
+<pre><code class="language-java">   // 定义一个枚举来表示温度单位
+   public enum TemperatureScale {
+       FAHRENHEIT,
+       CELSIUS
+   }
+   
+   // 方法签名变得清晰易懂
+   public void setTemperature(double temp, TemperatureScale scale) {
+       // ...
+   }
+   
+   // 调用代码，一目了然
+   setTemperature(25.0, TemperatureScale.CELSIUS);</code></pre>
+<h3>第 52 条：仔细设计方法签名</h3>
+  </div>
+</article>
+    <footer class="site-footer">
+      <a href="/">Home</a>
+      <a href="/archive/">Archive</a>
+      <a href="/rss.xml">RSS</a>
+      <a href="mailto:kangyinghuu@gmail.com">Email</a>
+    </footer>
+  </main>
+</body>
+</html>

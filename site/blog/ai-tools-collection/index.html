@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI 工具已经变成我日常工作的一部分了。这篇文章记录一下我目前在用哪些工具，以及一些使用心得。不是什么全面的测评，就是个人体验。">
+  <title>我在用的 AI 工具，以及一些使用心得 - Pingzhi HU</title>
+  <link rel="canonical" href="https://devhiker.xyz/blog/ai-tools-collection/">
+  <link rel="alternate" type="application/rss+xml" title="Pingzhi HU" href="/rss.xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="side-nav" aria-label="Blog navigation">
+    <a href="/archive/">Post Archive</a>
+  </aside>
+  <main class="page">
+    <header class="site-header">
+      <h1><a href="/">Pingzhi HU</a></h1>
+      <p>一个 Java 程序员的个人博客</p>
+    </header>
+<article class="post">
+  <header class="post-header">
+    <h1>我在用的 AI 工具，以及一些使用心得</h1>
+    <div class="meta">Posted 2025-11-15 in <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/ai/">AI</a></div>
+  </header>
+  <div class="post-body">
+<p>AI 工具已经变成我日常工作的一部分了。这篇文章记录一下我目前在用哪些工具，以及一些使用心得。不是什么全面的测评，就是个人体验。</p>
+<h2>写代码：Cursor</h2>
+<p>之前写过一篇 <a href="/blog/cursor-experience/">Cursor 的使用感受</a>，这里再补充一些。</p>
+<h3>现在怎么用</h3>
+<p>用了大半年，Cursor 已经成了我的主力编辑器。主要用法：</p>
+<p><strong>1. 写新代码</strong></p>
+<p>简单的 CRUD、工具类、测试代码，基本让 AI 写，我来审。效率确实高很多。</p>
+<pre><code class="language-">我的 prompt 一般是这样：
+&quot;写一个用户服务，包含增删改查，用 Spring Boot + MyBatis，参考项目里其他服务的风格&quot;</code></pre>
+<p><strong>2. 改老代码</strong></p>
+<p>这个更好用。选中一段代码，告诉它要改成什么样，比自己改快多了。特别是那种重复性的修改，比如给一堆方法加日志、改参数名之类的。</p>
+<p><strong>3. 问问题</strong></p>
+<p>不懂的代码、不熟悉的库，直接问它。比翻文档快，而且能结合你的项目上下文回答。</p>
+<h3>踩过的坑</h3>
+<p><strong>1. 不要完全信任它</strong></p>
+<p>AI 写的代码有时候看起来很对，跑起来有问题。特别是一些边界情况、并发问题，它经常考虑不到。</p>
+<p><strong>所以一定要 review，不能直接用。</strong></p>
+<p><strong>2. 复杂逻辑还是自己想</strong></p>
+<p>涉及到业务逻辑、架构设计的东西，AI 给的方案经常不太行。它不理解你的业务上下文，给出的都是"通用解"。</p>
+<p><strong>3. 有时候不如自己写</strong></p>
+<p>很简单的东西，写 prompt 的时间可能比自己写还长。不用为了用 AI 而用 AI。</p>
+<h2>日常问答：ChatGPT / Claude</h2>
+<p>这两个我都在用，各有优缺点。</p>
+<h3>ChatGPT（GPT-4）</h3>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>知识面广，什么都能聊</li>
+<li>写文案、翻译挺好用</li>
+<li>插件生态丰富</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>有时候会"一本正经地胡说八道"</li>
+<li>代码能力感觉没有 Claude 好</li>
+<li>经常绕圈子，不直接回答问题</li>
+</ul>
+<h3>Claude</h3>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>回答更直接，废话少</li>
+<li>代码能力强，解释也清楚</li>
+<li>长文本处理好</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>有些话题会拒绝回答</li>
+<li>知识更新没那么快</li>
+</ul>
+<h3>我的用法</h3>
+<ul>
+<li><strong>写代码相关</strong>：优先用 Claude</li>
+<li><strong>写文章、翻译</strong>：用 ChatGPT</li>
+<li><strong>闲聊、头脑风暴</strong>：都可以</li>
+</ul>
+<h2>Prompt 心得</h2>
+<p>用了这么久，总结了一些写 prompt 的经验。</p>
+<h3>1. 给足上下文</h3>
+<pre><code class="language-">❌ 差的 prompt：
+&quot;写一个登录功能&quot;
+
+✅ 好的 prompt：
+&quot;写一个登录功能，用 Spring Boot，需要：
+1. 支持用户名+密码登录
+2. 用 JWT 做 token
+3. 密码用 BCrypt 加密
+4. 参考项目里 UserController 的风格&quot;</code></pre>
+<h3>2. 明确输出格式</h3>
+<pre><code class="language-">&quot;用表格对比 MySQL 和 PostgreSQL 的区别&quot;
+&quot;用中文回答，分点列出&quot;
+&quot;只给代码，不要解释&quot;</code></pre>
+<h3>3. 分步骤来</h3>
+<p>复杂任务不要一次性让它做完，拆成几步：</p>
+<pre><code class="language-">第一步：&quot;先帮我分析这个需求，列出要做的事情&quot;
+第二步：&quot;针对第一点，给出实现方案&quot;
+第三步：&quot;写出具体代码&quot;</code></pre>
+<h3>4. 让它扮演角色</h3>
+<pre><code class="language-">&quot;你是一个资深的 Java 开发者，帮我 review 这段代码&quot;
+&quot;假设你是产品经理，这个功能还有什么边界情况需要考虑？&quot;</code></pre>
+<h3>5. 不满意就追问</h3>
+<p>AI 第一次回答不好很正常，继续追问：</p>
+<pre><code class="language-">&quot;这个方案有什么问题？&quot;
+&quot;有没有更简单的方法？&quot;
+&quot;如果并发量很大，这个方案还行吗？&quot;</code></pre>
+<h2>其他工具</h2>
+<h3>GitHub Copilot</h3>
+<p>写代码时的自动补全，有时候挺准的。但我现在主要用 Cursor，两个功能有重叠。</p>
+<h3>Perplexity</h3>
+<p>搜索引擎 + AI，适合搜一些实时信息。比如 "XXX 框架最新版本有什么新特性"，它会帮你总结。</p>
+<h3>NotebookLM</h3>
+<p>Google 的工具，可以把一堆文档扔进去，然后针对这些文档问问题。学习新东西的时候挺好用。</p>
+<h3>AI 绘图（Midjourney / DALL-E）</h3>
+<p>偶尔用来生成一些配图、图标。做独立开发的话，不想找设计师可以先用 AI 凑合。</p>
+<h2>我的工作流</h2>
+<p>现在一天的工作流大概是这样：</p>
+<pre><code class="language-">1. 早上看需求、想方案
+   - 复杂的需求，先让 AI 帮我分析、头脑风暴
+   
+2. 写代码
+   - 简单的让 Cursor 写
+   - 复杂的自己写，AI 辅助
+   - 写完让 AI review 一遍
+   
+3. 遇到问题
+   - 先问 AI，不行再 Google
+   - 看不懂的代码、文档，让 AI 解释
+   
+4. 写文档、周报
+   - 让 AI 帮忙润色、翻译</code></pre>
+<p><strong>体感效率提升</strong>：大概 30%-50%？很难精确衡量，但确实快了不少。</p>
+<h2>一些思考</h2>
+<h3>AI 会取代程序员吗？</h3>
+<p>短期不会，但会改变这个职业。</p>
+<p>现在的 AI 更像是一个"很厉害的实习生"——执行力强，但需要你告诉它做什么、怎么做，还要帮它 review。</p>
+<p>但以后呢？不好说。可能 5 年后、10 年后，很多现在需要人写的代码，AI 就能搞定了。</p>
+<h3>应该焦虑吗？</h3>
+<p>有点焦虑是正常的，但也没必要太焦虑。</p>
+<p>我的想法是：<strong>与其担心被取代，不如先把 AI 用好</strong>。会用 AI 的程序员，效率比不会用的高很多。至少目前，这是一个优势而不是威胁。</p>
+<h3>什么能力更重要了？</h3>
+<ul>
+<li><strong>理解需求的能力</strong>：知道要做什么，比知道怎么做更重要</li>
+<li><strong>判断力</strong>：AI 给的方案对不对、好不好，需要你来判断</li>
+<li><strong>学习能力</strong>：AI 工具在快速迭代，要跟上</li>
+<li><strong>沟通能力</strong>：需求、方案还是要跟人聊</li>
+</ul>
+<h2>最后</h2>
+<p>AI 工具变化很快，这篇文章里写的，可能过几个月就过时了。</p>
+<p>但有一点应该不会变：<strong>工具是用来解决问题的，不是用来炫技的</strong>。好用就用，不好用就换，没必要为了"跟上潮流"而用。</p>
+<p>如果你有什么好用的 AI 工具，也欢迎推荐给我。</p>
+<hr>
+<p><em>最后更新：2025 年 11 月</em></p>
+  </div>
+</article>
+    <footer class="site-footer">
+      <a href="/">Home</a>
+      <a href="/archive/">Archive</a>
+      <a href="/rss.xml">RSS</a>
+      <a href="mailto:kangyinghuu@gmail.com">Email</a>
+    </footer>
+  </main>
+</body>
+</html>

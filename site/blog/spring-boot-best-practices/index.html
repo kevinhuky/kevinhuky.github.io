@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="本文总结 Spring Boot 开发中的最佳实践，涵盖项目结构、配置管理、异常处理、日志规范、性能优化等方面，帮助开发者构建更健壮、更易维护的应用程序。">
+  <title>Spring Boot 最佳实践与常用技巧 - Pingzhi HU</title>
+  <link rel="canonical" href="https://devhiker.xyz/blog/spring-boot-best-practices/">
+  <link rel="alternate" type="application/rss+xml" title="Pingzhi HU" href="/rss.xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="side-nav" aria-label="Blog navigation">
+    <a href="/archive/">Post Archive</a>
+  </aside>
+  <main class="page">
+    <header class="site-header">
+      <h1><a href="/">Pingzhi HU</a></h1>
+      <p>一个 Java 程序员的个人博客</p>
+    </header>
+<article class="post">
+  <header class="post-header">
+    <h1>Spring Boot 最佳实践与常用技巧</h1>
+    <div class="meta">Posted 2025-07-15 in <a href="/category/engineering/">Engineering</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
+  </header>
+  <div class="post-body">
+<p>本文总结 Spring Boot 开发中的最佳实践，涵盖项目结构、配置管理、异常处理、日志规范、性能优化等方面，帮助开发者构建更健壮、更易维护的应用程序。</p>
+<h2>一、项目结构规范</h2>
+<h3>1.1 推荐的包结构</h3>
+<pre><code class="language-">com.example.myapp/
+├── MyApplication.java          # 启动类
+├── config/                     # 配置类
+│   ├── WebConfig.java
+│   ├── SecurityConfig.java
+│   └── SwaggerConfig.java
+├── controller/                 # 控制器层
+│   └── UserController.java
+├── service/                    # 服务层
+│   ├── UserService.java
+│   └── impl/
+│       └── UserServiceImpl.java
+├── repository/                 # 数据访问层
+│   └── UserRepository.java
+├── entity/                     # 实体类
+│   └── User.java
+├── dto/                        # 数据传输对象
+│   ├── request/
+│   │   └── UserCreateRequest.java
+│   └── response/
+│       └── UserResponse.java
+├── exception/                  # 自定义异常
+│   ├── BusinessException.java
+│   └── GlobalExceptionHandler.java
+├── util/                       # 工具类
+│   └── DateUtils.java
+└── constant/                   # 常量类
+    └── ErrorCode.java</code></pre>
+<h3>1.2 分层职责</h3>
+<table><thead><tr>
+<th>层级</th>
+<th>职责</th>
+<th>命名规范</th>
+</tr></thead><tbody>
+<tr>
+<td>Controller</td>
+<td>接收请求、参数校验、返回响应</td>
+<td><code>*Controller</code></td>
+</tr>
+<tr>
+<td>Service</td>
+<td>业务逻辑处理</td>
+<td><code>*Service</code> / <code>*ServiceImpl</code></td>
+</tr>
+<tr>
+<td>Repository</td>
+<td>数据访问</td>
+<td><code>*Repository</code> / <code>*Mapper</code></td>
+</tr>
+<tr>
+<td>Entity</td>
+<td>数据库映射实体</td>
+<td>与表名对应</td>
+</tr>
+<tr>
+<td>DTO</td>
+<td>数据传输对象</td>
+<td><code>*Request</code> / <code>*Response</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>二、配置管理</h2>
+<h3>2.1 多环境配置</h3>
+<pre><code class="language-yaml"># application.yml - 通用配置
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}  # 默认开发环境
+
+# application-dev.yml - 开发环境
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb_dev
+
+# application-prod.yml - 生产环境
+server:
+  port: 80
+spring:
+  datasource:
+    url: jdbc:mysql://prod-db:3306/mydb</code></pre>
+<h3>2.2 配置类封装</h3>
+<p>将配置项封装到类中，便于管理和使用：</p>
+<pre><code class="language-java">@Data
+@Component
+@ConfigurationProperties(prefix = &quot;app&quot;)
+public class AppProperties {
+    private String name;
+    private String version;
+    private Security security = new Security();
+    
+    @Data
+    public static class Security {
+        private String jwtSecret;
+        private long jwtExpiration = 86400000;  // 默认值
+    }
+}</code></pre>
+<pre><code class="language-yaml"># application.yml
+app:
+  name: MyApplication
+  version: 1.0.0
+  security:
+    jwt-secret: ${JWT_SECRET:default-secret}
+    jwt-expiration: 86400000</code></pre>
+<h3>2.3 敏感信息处理</h3>
+<p><strong>❌ 不要这样做</strong>：</p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    password: 123456  # 明文密码</code></pre>
+<p><strong>✅ 推荐做法</strong>：</p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    password: ${DB_PASSWORD}  # 从环境变量读取</code></pre>
+<p>或使用 Jasypt 加密：</p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    password: ENC(加密后的密码)</code></pre>
+<hr>
+<h2>三、统一响应格式</h2>
+<h3>3.1 定义响应结构</h3>
+<pre><code class="language-java">@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Result&lt;T&gt; {
+    private int code;
+    private String message;
+    private T data;
+    private long timestamp = System.currentTimeMillis();
+    
+    public static &lt;T&gt; Result&lt;T&gt; success(T data) {
+        return new Result&lt;&gt;(200, &quot;success&quot;, data, System.currentTimeMillis());
+    }
+    
+    public static &lt;T&gt; Result&lt;T&gt; error(int code, String message) {
+        return new Result&lt;&gt;(code, message, null, System.currentTimeMillis());
+    }
+}</code></pre>
+<h3>3.2 Controller 使用</h3>
+<pre><code class="language-java">@RestController
+@RequestMapping(&quot;/api/users&quot;)
+public class UserController {
+    
+    @GetMapping(&quot;/{id}&quot;)
+    public Result&lt;UserResponse&gt; getUser(@PathVariable Long id) {
+        UserResponse user = userService.getById(id);
+        return Result.success(user);
+    }
+    
+    @PostMapping
+    public Result&lt;Long&gt; createUser(@Valid @RequestBody UserCreateRequest request) {
+        Long userId = userService.create(request);
+        return Result.success(userId);
+    }
+}</code></pre>
+<h3>3.3 响应示例</h3>
+<pre><code class="language-json">// 成功响应
+{
+    &quot;code&quot;: 200,
+    &quot;message&quot;: &quot;success&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;username&quot;: &quot;zhangsan&quot;,
+        &quot;email&quot;: &quot;zhangsan@example.com&quot;
+    },
+    &quot;timestamp&quot;: 1705123456789
+}
+
+// 错误响应
+{
+    &quot;code&quot;: 40001,
+    &quot;message&quot;: &quot;用户不存在&quot;,
+    &quot;data&quot;: null,
+    &quot;timestamp&quot;: 1705123456789
+}</code></pre>
+<hr>
+<h2>四、全局异常处理</h2>
+<h3>4.1 自定义业务异常</h3>
+<pre><code class="language-java">@Getter
+public class BusinessException extends RuntimeException {
+    private final int code;
+    
+    public BusinessException(int code, String message) {
+        super(message);
+        this.code = code;
+    }
+    
+    public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.code = errorCode.getCode();
+    }
+}
+
+// 错误码枚举
+@Getter
+@AllArgsConstructor
+public enum ErrorCode {
+    USER_NOT_FOUND(40001, &quot;用户不存在&quot;),
+    USER_ALREADY_EXISTS(40002, &quot;用户已存在&quot;),
+    INVALID_PASSWORD(40003, &quot;密码错误&quot;),
+    UNAUTHORIZED(40100, &quot;未登录或登录已过期&quot;),
+    FORBIDDEN(40300, &quot;无权限访问&quot;),
+    SYSTEM_ERROR(50000, &quot;系统内部错误&quot;);
+    
+    private final int code;
+    private final String message;
+}</code></pre>
+<h3>4.2 全局异常处理器</h3>
+<pre><code class="language-java">@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    
+    // 业务异常
+    @ExceptionHandler(BusinessException.class)
+    public Result&lt;Void&gt; handleBusinessException(BusinessException e) {
+        log.warn(&quot;业务异常: code={}, message={}&quot;, e.getCode(), e.getMessage());
+        return Result.error(e.getCode(), e.getMessage());
+    }
+    
+    // 参数校验异常
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result&lt;Void&gt; handleValidationException(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .findFirst()
+                .orElse(&quot;参数校验失败&quot;);
+        log.warn(&quot;参数校验失败: {}&quot;, message);
+        return Result.error(40000, message);
+    }
+    
+    // 未知异常
+    @ExceptionHandler(Exception.class)
+    public Result&lt;Void&gt; handleException(Exception e) {
+        log.error(&quot;系统异常&quot;, e);
+        return Result.error(50000, &quot;系统内部错误，请稍后重试&quot;);
+    }
+}</code></pre>
+<hr>
+<h2>五、参数校验</h2>
+<h3>5.1 常用校验注解</h3>
+<pre><code class="language-java">@Data
+public class UserCreateRequest {
+    @NotBlank(message = &quot;用户名不能为空&quot;)
+    @Size(min = 2, max = 20, message = &quot;用户名长度应在2-20之间&quot;)
+    private String username;
+    
+    @NotBlank(message = &quot;密码不能为空&quot;)
+    @Pattern(regexp = &quot;^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$&quot;,
+             message = &quot;密码至少8位，包含大小写字母和数字&quot;)
+    private String password;
+    
+    @Email(message = &quot;邮箱格式不正确&quot;)
+    private String email;
+    
+    @Min(value = 0, message = &quot;年龄不能为负数&quot;)
+    @Max(value = 150, message = &quot;年龄不能超过150&quot;)
+    private Integer age;
+    
+    @NotNull(message = &quot;手机号不能为空&quot;)
+    @Pattern(regexp = &quot;^1[3-9]\\d{9}$&quot;, message = &quot;手机号格式不正确&quot;)
+    private String phone;
+}</code></pre>
+<h3>5.2 分组校验</h3>
+<pre><code class="language-java">// 定义校验分组
+public interface CreateGroup {}
+public interface UpdateGroup {}
+
+@Data
+public class UserRequest {
+    @Null(groups = CreateGroup.class, message = &quot;创建时不能指定ID&quot;)
+    @NotNull(groups = UpdateGroup.class, message = &quot;更新时必须指定ID&quot;)
+    private Long id;
+    
+    @NotBlank(groups = {CreateGroup.class, UpdateGroup.class})
+    private String username;
+}
+
+// Controller 中使用
+@PostMapping
+public Result&lt;Long&gt; create(@Validated(CreateGroup.class) @RequestBody UserRequest request) { }
+
+@PutMapping
+public Result&lt;Void&gt; update(@Validated(UpdateGroup.class) @RequestBody UserRequest request) { }</code></pre>
+<hr>
+<h2>六、日志规范</h2>
+<h3>6.1 日志级别使用</h3>
+<table><thead><tr>
+<th>级别</th>
+<th>用途</th>
+<th>示例</th>
+</tr></thead><tbody>
+<tr>
+<td>ERROR</td>
+<td>影响功能使用的错误</td>
+<td>数据库连接失败、空指针异常</td>
+</tr>
+<tr>
+<td>WARN</td>
+<td>潜在问题，但不影响功能</td>
+<td>配置缺失使用默认值</td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>重要业务信息</td>
+<td>用户登录、订单创建</td>
+</tr>
+<tr>
+<td>DEBUG</td>
+<td>调试信息</td>
+<td>方法入参、SQL 语句</td>
+</tr>
+</tbody></table>
+<h3>6.2 日志最佳实践</h3>
+<pre><code class="language-java">@Slf4j
+@Service
+public class UserServiceImpl implements UserService {
+    
+    @Override
+    public UserResponse getById(Long id) {
+        log.debug(&quot;查询用户, id={}&quot;, id);
+        
+        User user = userRepository.findById(id)
+                .orElseThrow(() -&gt; {
+                    log.warn(&quot;用户不存在, id={}&quot;, id);
+                    return new BusinessException(ErrorCode.USER_NOT_FOUND);
+                });
+        
+        log.info(&quot;查询用户成功, id={}, username={}&quot;, id, user.getUsername());
+        return convertToResponse(user);
+    }
+    
+    @Override
+    public Long create(UserCreateRequest request) {
+        // ✅ 使用占位符，避免字符串拼接
+        log.info(&quot;创建用户, username={}&quot;, request.getUsername());
+        
+        // ❌ 不要这样做
+        // log.info(&quot;创建用户, username=&quot; + request.getUsername());
+        
+        // ❌ 不要打印敏感信息
+        // log.info(&quot;创建用户, password={}&quot;, request.getPassword());
+    }
+}</code></pre>
+<h3>6.3 Logback 配置</h3>
+<pre><code class="language-xml">&lt;!-- logback-spring.xml --&gt;
+&lt;configuration&gt;
+    &lt;springProfile name=&quot;dev&quot;&gt;
+        &lt;root level=&quot;DEBUG&quot;&gt;
+            &lt;appender-ref ref=&quot;CONSOLE&quot;/&gt;
+        &lt;/root&gt;
+    &lt;/springProfile&gt;
+    
+    &lt;springProfile name=&quot;prod&quot;&gt;
+        &lt;root level=&quot;INFO&quot;&gt;
+            &lt;appender-ref ref=&quot;FILE&quot;/&gt;
+        &lt;/root&gt;
+        
+        &lt;!-- 异步日志，提升性能 --&gt;
+        &lt;appender name=&quot;ASYNC&quot; class=&quot;ch.qos.logback.classic.AsyncAppender&quot;&gt;
+            &lt;appender-ref ref=&quot;FILE&quot;/&gt;
+        &lt;/appender&gt;
+    &lt;/springProfile&gt;
+&lt;/configuration&gt;</code></pre>
+<hr>
+<h2>七、常用注解速查</h2>
+<h3>7.1 核心注解</h3>
+<table><thead><tr>
+<th>注解</th>
+<th>作用</th>
+</tr></thead><tbody>
+<tr>
+<td><code>@SpringBootApplication</code></td>
+<td>启动类，包含 @Configuration + @EnableAutoConfiguration + @ComponentScan</td>
+</tr>
+<tr>
+<td><code>@RestController</code></td>
+<td>@Controller + @ResponseBody</td>
+</tr>
+<tr>
+<td><code>@RequestMapping</code></td>
+<td>请求映射</td>
+</tr>
+<tr>
+<td><code>@Autowired</code></td>
+<td>依赖注入（推荐使用构造器注入）</td>
+</tr>
+<tr>
+<td><code>@Value</code></td>
+<td>注入配置值</td>
+</tr>
+<tr>
+<td><code>@ConfigurationProperties</code></td>
+<td>配置类绑定</td>
+</tr>
+</tbody></table>
+<h3>7.2 Web 相关注解</h3>
+<pre><code class="language-java">@RestController
+@RequestMapping(&quot;/api/users&quot;)
+@RequiredArgsConstructor  // Lombok 生成构造器
+public class UserController {
+    
+    private final UserService userService;  // 构造器注入
+    
+    @GetMapping(&quot;/{id}&quot;)                           // GET /api/users/{id}
+    public Result&lt;User&gt; getById(@PathVariable Long id) { }
+    
+    @GetMapping                                     // GET /api/users?name=xxx
+    public Result&lt;List&lt;User&gt;&gt; list(@RequestParam(required = false) String name) { }
+    
+    @PostMapping                                    // POST /api/users
+    public Result&lt;Long&gt; create(@RequestBody @Valid UserCreateRequest request) { }
+    
+    @PutMapping(&quot;/{id}&quot;)                           // PUT /api/users/{id}
+    public Result&lt;Void&gt; update(@PathVariable Long id, @RequestBody UserUpdateRequest request) { }
+    
+    @DeleteMapping(&quot;/{id}&quot;)                        // DELETE /api/users/{id}
+    public Result&lt;Void&gt; delete(@PathVariable Long id) { }
+}</code></pre>
+<h3>7.3 事务相关</h3>
+<pre><code class="language-java">@Service
+public class OrderServiceImpl implements OrderService {
+    
+    // 默认：REQUIRED，遇到 RuntimeException 回滚
+    @Transactional
+    public void createOrder(OrderRequest request) { }
+    
+    // 指定回滚异常
+    @Transactional(rollbackFor = Exception.class)
+    public void createOrderWithCheck(OrderRequest request) throws Exception { }
+    
+    // 只读事务，用于查询优化
+    @Transactional(readOnly = true)
+    public OrderResponse getOrder(Long id) { }
+    
+    // 新事务：挂起当前事务，开启新事务
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveLog(String content) { }
+}</code></pre>
+<hr>
+<h2>八、性能优化建议</h2>
+<h3>8.1 启动优化</h3>
+<pre><code class="language-yaml">spring:
+  main:
+    lazy-initialization: true  # 延迟初始化 Bean
+  jmx:
+    enabled: false  # 关闭 JMX
+
+# 使用 -noverify 参数跳过字节码验证
+# java -noverify -jar app.jar</code></pre>
+<h3>8.2 数据库连接池配置</h3>
+<pre><code class="language-yaml">spring:
+  datasource:
+    hikari:
+      minimum-idle: 5           # 最小空闲连接数
+      maximum-pool-size: 20     # 最大连接数
+      idle-timeout: 300000      # 空闲超时时间(ms)
+      max-lifetime: 1800000     # 连接最大存活时间(ms)
+      connection-timeout: 30000 # 连接超时时间(ms)</code></pre>
+<h3>8.3 缓存使用</h3>
+<pre><code class="language-java">@Service
+@CacheConfig(cacheNames = &quot;users&quot;)
+public class UserServiceImpl implements UserService {
+    
+    @Cacheable(key = &quot;#id&quot;)  // 查询时缓存
+    public UserResponse getById(Long id) { }
+    
+    @CachePut(key = &quot;#result.id&quot;)  // 更新时刷新缓存
+    public UserResponse update(UserUpdateRequest request) { }
+    
+    @CacheEvict(key = &quot;#id&quot;)  // 删除时清除缓存
+    public void delete(Long id) { }
+    
+    @CacheEvict(allEntries = true)  // 清除所有缓存
+    public void clearCache() { }
+}</code></pre>
+<h3>8.4 异步处理</h3>
+<pre><code class="language-java">@EnableAsync
+@Configuration
+public class AsyncConfig {
+    @Bean
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(20);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix(&quot;async-&quot;);
+        return executor;
+    }
+}
+
+@Service
+public class NotificationService {
+    @Async  // 异步执行
+    public void sendEmail(String to, String content) {
+        // 耗时操作
+    }
+}</code></pre>
+<hr>
+<h2>九、安全实践</h2>
+<h3>9.1 SQL 注入防护</h3>
+<pre><code class="language-java">// ✅ 使用参数化查询
+@Query(&quot;SELECT u FROM User u WHERE u.username = :username&quot;)
+User findByUsername(@Param(&quot;username&quot;) String username);
+
+// ❌ 不要拼接 SQL
+@Query(&quot;SELECT u FROM User u WHERE u.username = &#x27;&quot; + username + &quot;&#x27;&quot;)  // 危险！</code></pre>
+<h3>9.2 XSS 防护</h3>
+<pre><code class="language-java">// 使用 HtmlUtils 转义
+String safeContent = HtmlUtils.htmlEscape(userInput);
+
+// 或使用 @JsonDeserialize 自动转义</code></pre>
+<h3>9.3 接口安全</h3>
+<pre><code class="language-java">@RestController
+@RequestMapping(&quot;/api&quot;)
+public class ApiController {
+    
+    // 限流
+    @RateLimiter(rate = 10, timeUnit = TimeUnit.SECONDS)
+    @GetMapping(&quot;/data&quot;)
+    public Result&lt;Data&gt; getData() { }
+    
+    // 幂等性（通过 Token 或业务 ID）
+    @PostMapping(&quot;/orders&quot;)
+    public Result&lt;Long&gt; createOrder(
+            @RequestHeader(&quot;X-Idempotency-Key&quot;) String idempotencyKey,
+            @RequestBody OrderRequest request) { }
+}</code></pre>
+<hr>
+<h2>十、实用技巧</h2>
+<h3>10.1 优雅停机</h3>
+<pre><code class="language-yaml">server:
+  shutdown: graceful  # 开启优雅停机
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s  # 等待时间</code></pre>
+<h3>10.2 健康检查</h3>
+<pre><code class="language-yaml">management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always</code></pre>
+<h3>10.3 自定义 Banner</h3>
+<pre><code class="language-">  _____             _    _ _ _
+ |  __ \           | |  | (_) |
+ | |  | | _____   _| |__| |_| | _____ _ __
+ | |  | |/ _ \ \ / /  __  | | |/ / _ \ &#x27;__|
+ | |__| |  __/\ V /| |  | | |   &lt;  __/ |
+ |_____/ \___| \_/ |_|  |_|_|_|\_\___|_|
+                                    
+ :: Spring Boot ::   (v${spring-boot.version})
+ :: Application ::   ${app.name} v${app.version}</code></pre>
+<hr>
+<blockquote><p><strong>参考资料</strong>： - <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/">Spring Boot 官方文档</a> - 《Spring Boot 实战》</p></blockquote>
+  </div>
+</article>
+    <footer class="site-footer">
+      <a href="/">Home</a>
+      <a href="/archive/">Archive</a>
+      <a href="/rss.xml">RSS</a>
+      <a href="mailto:kangyinghuu@gmail.com">Email</a>
+    </footer>
+  </main>
+</body>
+</html>
