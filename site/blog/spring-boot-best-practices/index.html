@@ -10,18 +10,19 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <aside class="side-nav" aria-label="Blog navigation">
-    <a href="/archive/">Post Archive</a>
-  </aside>
   <main class="page">
     <header class="site-header">
       <h1><a href="/">Pingzhi HU</a></h1>
-      <p>一个 Java 程序员的个人博客</p>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/archive/">Archive</a>
+        <a href="/rss.xml">RSS</a>
+        <a href="mailto:kangyinghuu@gmail.com">Email</a>
+      </nav>
     </header>
 <article class="post">
   <header class="post-header">
     <h1>Spring Boot 最佳实践与常用技巧</h1>
-    <div class="meta">Posted 2025-07-15 in <a href="/category/engineering/">Engineering</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
+    <div class="meta"><time datetime="2025-07-15">2025-07-15</time> · <a href="/category/engineering/">Engineering</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
   </header>
   <div class="post-body">
 <p>本文总结 Spring Boot 开发中的最佳实践，涵盖项目结构、配置管理、异常处理、日志规范、性能优化等方面，帮助开发者构建更健壮、更易维护的应用程序。</p>
@@ -589,7 +590,6 @@ spring:
       <a href="/">Home</a>
       <a href="/archive/">Archive</a>
       <a href="/rss.xml">RSS</a>
-      <a href="mailto:kangyinghuu@gmail.com">Email</a>
     </footer>
   </main>
 </body>

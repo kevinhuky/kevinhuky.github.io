@@ -91,6 +91,19 @@ def slugify(value: str) -> str:
     return value or quote(value)
 
 
+def category_links(categories: list[str]) -> str:
+    return " ".join(
+        f'<a href="/category/{quote(slugify(category))}/">{html.escape(category)}</a>'
+        for category in categories
+    )
+
+
+def post_meta(post: Post) -> str:
+    cats = category_links(post.categories)
+    date_text = post.date.isoformat()
+    return f'<time datetime="{date_text}">{date_text}</time>{" \u00b7 " + cats if cats else ""}'
+
+
 def inline_markup(text: str, link_map: dict[str, str]) -> str:
     placeholders: list[str] = []
 
@@ -309,20 +322,20 @@ def page(title: str, body: str, description: str = SITE_DESCRIPTION, path: str =
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <aside class="side-nav" aria-label="Blog navigation">
-    <a href="/archive/">Post Archive</a>
-  </aside>
   <main class="{main_class}">
     <header class="site-header">
-      <h1><a href="/">{SITE_TITLE}</a></h1>
-      <p>{SITE_DESCRIPTION}</p>
+      <h1><a href="/">{html.escape(SITE_TITLE)}</a></h1>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/archive/">Archive</a>
+        <a href="/rss.xml">RSS</a>
+        <a href="mailto:kangyinghuu@gmail.com">Email</a>
+      </nav>
     </header>
 {body}
     <footer class="site-footer">
       <a href="/">Home</a>
       <a href="/archive/">Archive</a>
       <a href="/rss.xml">RSS</a>
-      <a href="mailto:kangyinghuu@gmail.com">Email</a>
     </footer>
   </main>
 </body>
@@ -331,19 +344,17 @@ def page(title: str, body: str, description: str = SITE_DESCRIPTION, path: str =
 
 
 def post_summary(post: Post) -> str:
-    cats = " ".join(f'<a href="/category/{quote(slugify(category))}/">{html.escape(category)}</a>' for category in post.categories)
     return f"""<article class="post-summary">
   <h2><a href="{post.url}">{html.escape(post.title)}</a></h2>
+  <div class="meta">{post_meta(post)}</div>
   <p>{html.escape(post.excerpt)}</p>
-  <div class="meta">Posted {post.date.isoformat()}{' in ' + cats if cats else ''}</div>
 </article>"""
 
 
 def post_full(post: Post) -> str:
-    cats = " ".join(f'<a href="/category/{quote(slugify(category))}/">{html.escape(category)}</a>' for category in post.categories)
     return f"""<article class="post-summary post-summary--full">
   <h2><a href="{post.url}">{html.escape(post.title)}</a></h2>
-  <div class="meta">Posted {post.date.isoformat()}{' in ' + cats if cats else ''}</div>
+  <div class="meta">{post_meta(post)}</div>
   <div class="post-body">
 {post.html}
   </div>
@@ -363,15 +374,14 @@ def render_home(posts: list[Post]) -> str:
   <p>这里记录技术学习、踩坑、读书和独立开发的一些想法。</p>
 </section>"""
     recent_posts = posts[:5]
-    return page(SITE_TITLE, intro + "\n" + "\n".join(post_full(post) for post in recent_posts), SITE_DESCRIPTION, "/")
+    return page(SITE_TITLE, intro + "\n" + "\n".join(post_full(post) for post in recent_posts), SITE_DESCRIPTION, "/", "home-page")
 
 
 def render_post(post: Post) -> str:
-    cats = " ".join(f'<a href="/category/{quote(slugify(category))}/">{html.escape(category)}</a>' for category in post.categories)
     body = f"""<article class="post">
   <header class="post-header">
     <h1>{html.escape(post.title)}</h1>
-    <div class="meta">Posted {post.date.isoformat()}{' in ' + cats if cats else ''}</div>
+    <div class="meta">{post_meta(post)}</div>
   </header>
   <div class="post-body">
 {post.html}
@@ -381,31 +391,41 @@ def render_post(post: Post) -> str:
 
 
 def render_archive(posts: list[Post]) -> str:
+    grouped: dict[str, list[Post]] = {}
+    for post in posts:
+        month = post.date.strftime("%Y-%m")
+        grouped.setdefault(month, []).append(post)
+
+    months = sorted(grouped, reverse=True)
     nav_items = []
     content_items = []
-    for index, post in enumerate(posts):
-        post_id = f"archive-post-{post.slug}"
+    for index, month in enumerate(months):
+        month_posts = grouped[month]
+        month_id = f"archive-{month}"
         active_class = " active" if index == 0 else ""
-        cats = " ".join(f'<a href="/category/{quote(slugify(category))}/">{html.escape(category)}</a>' for category in post.categories)
         nav_items.append(
-            f'<a class="archive-date-link{active_class}" href="#{post_id}" data-target="{post_id}" title="{html.escape(post.title, quote=True)}">'
-            f'<span>{post.date.isoformat()}</span></a>'
+            f'<a class="archive-month-link{active_class}" href="#{month_id}" data-target="{month_id}">'
+            f'<span>{month}</span><span class="archive-count">{len(month_posts)}</span></a>'
         )
-        content_items.append(f"""<article class="archive-post" id="{post_id}">
-  <header class="archive-post-header">
-    <div class="meta">{post.date.isoformat()}{' · ' + cats if cats else ''}</div>
-    <h2><a href="{post.url}">{html.escape(post.title)}</a></h2>
-  </header>
-  <div class="post-body">
-{post.html}
-  </div>
-</article>""")
+        list_items = "\n".join(
+            f'<li><time datetime="{post.date.isoformat()}">{post.date.isoformat()}</time>'
+            f'<a href="{post.url}">{html.escape(post.title)}</a></li>'
+            for post in month_posts
+        )
+        content_items.append(f"""<section class="archive-month-group" id="{month_id}">
+  <h2>{month}</h2>
+  <ol class="archive-list">
+{list_items}
+  </ol>
+</section>""")
 
+    nav_html = "\n      ".join(nav_items)
+    content_html = "\n".join(content_items)
     archive_script = """<script>
 (function () {
-  var links = Array.prototype.slice.call(document.querySelectorAll('.archive-date-link'));
-  var posts = Array.prototype.slice.call(document.querySelectorAll('.archive-post'));
-  if (!links.length || !posts.length || !('IntersectionObserver' in window)) return;
+  var links = Array.prototype.slice.call(document.querySelectorAll('.archive-month-link'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.archive-month-group'));
+  if (!links.length || !groups.length || !('IntersectionObserver' in window)) return;
 
   function setActive(id) {
     links.forEach(function (link) {
@@ -417,20 +437,20 @@ def render_archive(posts: list[Post]) -> str:
     entries.forEach(function (entry) {
       if (entry.isIntersecting) setActive(entry.target.id);
     });
-  }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+  }, { rootMargin: '-25% 0px -60% 0px', threshold: 0 });
 
-  posts.forEach(function (post) { observer.observe(post); });
+  groups.forEach(function (group) { observer.observe(group); });
 }());
 </script>"""
 
     body = f"""<section class="archive archive-linked">
   <h1>Archive</h1>
   <div class="archive-layout">
-    <nav class="archive-dates" aria-label="Post dates">
-      {''.join(nav_items)}
+    <nav class="archive-months" aria-label="Archive months">
+      {nav_html}
     </nav>
-    <div class="archive-posts">
-      {'\n'.join(content_items)}
+    <div class="archive-groups">
+{content_html}
     </div>
   </div>
 </section>
@@ -439,7 +459,7 @@ def render_archive(posts: list[Post]) -> str:
 
 
 def render_category(name: str, posts: list[Post], path: str) -> str:
-    body = f'<section class="archive"><h1>{html.escape(name)}</h1>\n'
+    body = f'<section class="archive post-list"><h1>{html.escape(name)}</h1>\n'
     body += "\n".join(post_summary(post) for post in posts)
     body += "\n</section>"
     return page(name, body, SITE_DESCRIPTION, path)

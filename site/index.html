@@ -10,20 +10,21 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <aside class="side-nav" aria-label="Blog navigation">
-    <a href="/archive/">Post Archive</a>
-  </aside>
-  <main class="page">
+  <main class="page home-page">
     <header class="site-header">
       <h1><a href="/">Pingzhi HU</a></h1>
-      <p>一个 Java 程序员的个人博客</p>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/archive/">Archive</a>
+        <a href="/rss.xml">RSS</a>
+        <a href="mailto:kangyinghuu@gmail.com">Email</a>
+      </nav>
     </header>
 <section class="intro">
   <p>这里记录技术学习、踩坑、读书和独立开发的一些想法。</p>
 </section>
 <article class="post-summary post-summary--full">
   <h2><a href="/blog/2025-year-review/">2025 年度技术复盘：成长、变化与思考</a></h2>
-  <div class="meta">Posted 2025-12-31 in <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
+  <div class="meta"><time datetime="2025-12-31">2025-12-31</time> · <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
   <div class="post-body">
 <p>2025 年即将结束，是时候停下脚步，回顾这一年的技术成长、踩过的坑、获得的收获，以及对未来的思考。这不仅是一份总结，更是一次与自己的对话。</p>
 <h2>写在前面</h2>
@@ -239,7 +240,7 @@ WHERE created_at &gt;= &#x27;2025-01-01 00:00:00&#x27;
 </article>
 <article class="post-summary post-summary--full">
   <h2><a href="/blog/ai-tools-collection/">我在用的 AI 工具，以及一些使用心得</a></h2>
-  <div class="meta">Posted 2025-11-15 in <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/ai/">AI</a></div>
+  <div class="meta"><time datetime="2025-11-15">2025-11-15</time> · <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/ai/">AI</a></div>
   <div class="post-body">
 <p>AI 工具已经变成我日常工作的一部分了。这篇文章记录一下我目前在用哪些工具，以及一些使用心得。不是什么全面的测评，就是个人体验。</p>
 <h2>写代码：Cursor</h2>
@@ -375,7 +376,7 @@ WHERE created_at &gt;= &#x27;2025-01-01 00:00:00&#x27;
 </article>
 <article class="post-summary post-summary--full">
   <h2><a href="/blog/indie-hacker-thoughts/">独立开发这件事：一个程序员的胡思乱想</a></h2>
-  <div class="meta">Posted 2025-10-20 in <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/%E7%8B%AC%E7%AB%8B%E5%BC%80%E5%8F%91/">独立开发</a></div>
+  <div class="meta"><time datetime="2025-10-20">2025-10-20</time> · <a href="/category/%E9%9A%8F%E7%AC%94/">随笔</a> <a href="/category/%E7%8B%AC%E7%AB%8B%E5%BC%80%E5%8F%91/">独立开发</a></div>
   <div class="post-body">
 <p>最近一直在想独立开发这件事。作为一个写了几年代码的后端程序员，总觉得应该自己做点什么出来。这篇文章没什么干货，就是记录一下我的想法和困惑。</p>
 <h2>为什么想做独立开发</h2>
@@ -478,7 +479,7 @@ WHERE created_at &gt;= &#x27;2025-01-01 00:00:00&#x27;
 </article>
 <article class="post-summary post-summary--full">
   <h2><a href="/blog/effective-java/">《Effective Java》阅读总结</a></h2>
-  <div class="meta">Posted 2025-09-09 in <a href="/category/%E9%98%85%E8%AF%BB/">阅读</a></div>
+  <div class="meta"><time datetime="2025-09-09">2025-09-09</time> · <a href="/category/%E9%98%85%E8%AF%BB/">阅读</a></div>
   <div class="post-body">
 <p>"对《Effective Java》进行阅读提炼，把书读薄，聚焦关键实践与原则，形成便于回顾和应用的笔记。"</p>
 <h2>Methods（方法）</h2>
@@ -613,7 +614,7 @@ WHERE created_at &gt;= &#x27;2025-01-01 00:00:00&#x27;
 </article>
 <article class="post-summary post-summary--full">
   <h2><a href="/blog/redis-cache-strategy/">Redis 缓存策略与常见问题解决方案</a></h2>
-  <div class="meta">Posted 2025-09-01 in <a href="/category/engineering/">Engineering</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
+  <div class="meta"><time datetime="2025-09-01">2025-09-01</time> · <a href="/category/engineering/">Engineering</a> <a href="/category/%E7%BB%88%E7%94%9F%E5%AD%A6%E4%B9%A0/">终生学习</a></div>
   <div class="post-body">
 <p>Redis 是最流行的内存数据库之一，广泛用于缓存、会话管理、排行榜等场景。本文深入讲解 Redis 缓存策略、数据结构选型、以及缓存穿透、击穿、雪崩等常见问题的解决方案。</p>
 <h2>一、Redis 简介</h2>
@@ -1194,7 +1195,6 @@ public Long getUserRank(String leaderboardKey, String userId) {
       <a href="/">Home</a>
       <a href="/archive/">Archive</a>
       <a href="/rss.xml">RSS</a>
-      <a href="mailto:kangyinghuu@gmail.com">Email</a>
     </footer>
   </main>
 </body>
