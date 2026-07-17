@@ -102,6 +102,7 @@ plugins:
   - blog:
       draft: true
       post_url_format: "{slug}"   # 简洁永久链接：/blog/<slug>/
+      pagination: false           # 文章列表不分页，全部展示在一页
   - search:
       # Material 官方推荐的分词 separator（字符类中含零宽空格 U+200B）
       separator: '[\s​\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
