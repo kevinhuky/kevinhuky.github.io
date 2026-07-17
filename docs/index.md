@@ -16,6 +16,8 @@ Java 后端工程师。写代码，折腾 AI 编程工具，业余做点小产�
   <span>·</span>
   <a href="https://github.com/riohuky" target="_blank" rel="noopener">GitHub</a>
   <span>·</span>
+  <a href="https://x.com/riohuky" target="_blank" rel="noopener">X</a>
+  <span>·</span>
   <a href="mailto:contact@riohu.com">Email</a>
   <span>·</span>
   <a href="feed_rss_created.xml">RSS</a>

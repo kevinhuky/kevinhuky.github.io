@@ -26,6 +26,9 @@ extra:
         - icon: fontawesome/brands/github
           link: https://github.com/riohuky
 
+        - icon: fontawesome/brands/x-twitter
+          link: https://x.com/riohuky
+
         - icon: fontawesome/solid/paper-plane
           link: mailto:contact@riohu.com
 
