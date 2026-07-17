@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal blog ("DevHiker's Blog", https://riohu.com) built with **MkDocs Material** and its built-in blog plugin. Content is primarily in Chinese. Deployed to GitHub Pages via a custom domain (`docs/CNAME`).
+Personal blog ("RioHU's Website", https://riohu.com) built with **MkDocs Material** and its built-in blog plugin. Content is primarily in Chinese. Deployed to GitHub Pages via a custom domain (`docs/CNAME`).
 
 ## Commands
 
