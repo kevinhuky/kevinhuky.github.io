@@ -97,6 +97,7 @@ plugins:
       enabled: !ENV [CI, false]   # 社交分享卡片仅在 CI 构建时生成
   - rss:
       match_path: blog/posts/.*
+      image: https://riohu.com/assets/logo/logo.png   # feed 频道图片（缺省会取到 None 导致 RSS 页头像裂图）
       date_from_meta:
         as_creation: date
       categories:
