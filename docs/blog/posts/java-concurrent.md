@@ -1,5 +1,6 @@
 ---
 title: Java 并发编程完全指南
+description: 系统总结 Java 并发编程核心：锁机制、CAS、AQS、线程池与并发容器，深入理解 JUC 的设计思想与实战应用。
 draft: false
 authors: [huyi]
 date: 2024-09-12
@@ -7,6 +8,9 @@ slug: juc
 categories:
   - Engineering
   - 终生学习
+tags:
+  - Java
+  - 并发编程
 ---
 
 本文系统总结 Java 并发编程的核心知识点，包括锁机制、CAS、AQS、线程池、并发容器等，帮助深入理解 JUC 包的设计思想与实战应用。<!-- more -->

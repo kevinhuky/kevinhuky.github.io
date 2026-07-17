@@ -1,66 +1,22 @@
-# Hey 👋
-
-我是 **KevinHu**，一个写 Java 的程序员。
-
-平时主要做后端开发，偶尔也折腾点前端。对独立开发很感兴趣，总想着自己搞点什么东西出来。最近被 AI 搞得有点焦虑，但也挺兴奋的——毕竟这玩意儿确实能提高不少效率。
-
-这个博客主要记录我的技术学习笔记、踩过的坑、以及一些乱七八糟的想法。写得不一定对，但至少是我自己的理解。
-
+---
+template: home.html
+title: About
+hide:
+  - toc
+  - navigation
 ---
 
-## 我会什么
+# Rio
 
-主要写 **Java**，Spring Boot 那一套用得比较熟。数据库主要用 MySQL，缓存用 Redis，消息队列接触过 RocketMQ。
+Java 后端工程师。写代码，折腾 AI 编程工具，业余做点小产品。
+偶尔在这里写技术笔记，也写读书和生活的随想。
 
-最近在玩 **Cursor**，不得不说 AI 编程工具是真的香。虽然有时候也会写出一些离谱的代码，但整体效率提升还是很明显的。
-
-其他的像 Docker、Linux 这些也会一点，够用的程度。
-
----
-
-## 最近在写的文章
-
-**技术相关**
-
-- [Java 并发编程笔记](blog/posts/java-concurrent.md) - JUC 那些东西，AQS、线程池之类的
-- [Spring Boot 开发经验](blog/posts/spring-boot-best-practices.md) - 一些我觉得有用的实践
-- [MySQL 索引怎么优化](blog/posts/mysql-index-optimization.md) - 被慢查询折腾过才知道索引的重要性
-- [Redis 缓存踩坑记录](blog/posts/redis-cache-strategy.md) - 穿透、击穿、雪崩，经典三连
-- [RocketMQ 学习笔记](blog/posts/rocketmq.md) - 消息队列相关
-
-**独立开发 & AI**
-
-- [独立开发这件事](blog/posts/indie-hacker-thoughts.md) - 一个程序员的胡思乱想
-- [我在用的 AI 工具](blog/posts/ai-tools-collection.md) - 以及一些使用心得
-- [用 Cursor 的一些感受](blog/posts/cursor-experience.md) - AI 编程工具真的会取代程序员吗？
-- [2025 年终总结](blog/posts/2025-year-review.md) - 回顾这一年学了啥、踩了啥坑
-
-**读书笔记**
-
-- [Effective Java 笔记](blog/posts/effective-java.md) - 这本书是真的经典
-- [我的书单](blog/posts/book-list.md) - 在读的和想读的
-
-[→ 全部文章](blog/index.md)
-
----
-
-## 我的项目
-
-### 🎯 4Q Task - 四象限任务管理
-
-**[4qtask.devhiker.xyz](https://4qtask.devhiker.xyz/)**
-
-一个基于四象限法则的任务管理工具。
-
-用过很多 Todo 应用，但总觉得不够直观。四象限法则（紧急/重要矩阵）是个经典的时间管理方法，但市面上专门做这个的工具不多，所以自己做了一个。
-
-简单、专注、够用就好。
-
----
-
-## 联系方式
-
-- GitHub: [github.com/kevinhuky](https://github.com/kevinhuky)
-- Email: [kangyinghuu@gmail.com](mailto:kangyinghuu@gmail.com)
-
-有什么想交流的可以发邮件，虽然我回复可能不太及时 😅
+<p class="home-links">
+  <a href="blog/">Blog</a>
+  <span>·</span>
+  <a href="https://github.com/riohuky" target="_blank" rel="noopener">GitHub</a>
+  <span>·</span>
+  <a href="mailto:contact@riohu.com">Email</a>
+  <span>·</span>
+  <a href="feed_rss_created.xml">RSS</a>
+</p>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+
+  {# Structured data for blog posts (search engines rich results) #}
+  {% if page and page.file and page.file.src_uri.startswith("blog/posts/") %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": {{ page.title | tojson }},
+    "description": {{ (page.meta.description or config.site_description) | tojson }},
+    "url": {{ page.canonical_url | tojson }},
+    {% if page.meta.date %}
+    "datePublished": {{ page.meta.date | string | tojson }},
+    {% endif %}
+    "author": {
+      "@type": "Person",
+      "name": "{{ config.site_author }}",
+      "url": "https://github.com/riohuky"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "{{ config.site_author }}"
+    },
+    "inLanguage": "zh-CN"
+  }
+  </script>
+  {% endif %}
+{% endblock %}

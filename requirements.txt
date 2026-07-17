@@ -1,0 +1,12 @@
+# Blog build dependencies — pinned to guard against MkDocs 2.0 breaking changes
+# (Material team has announced plugins & theme overrides will break in MkDocs 2.0)
+mkdocs>=1.6,<2
+mkdocs-material>=9.6,<10
+mkdocs-autorefs>=1.4
+mkdocs-rss-plugin>=1.15
+mkdocs-minify-plugin>=0.8
+# Chinese search word segmentation
+jieba>=0.42
+# Social cards image generation (used in CI; harmless locally)
+pillow>=10
+cairosvg>=2.7

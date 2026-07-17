@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block container %}
+<div class="mdx-home">
+  <div class="mdx-home__inner md-typeset mdx-404">
+    <h1>404</h1>
+    <p>你要找的页面不存在，或者已经搬走了。</p>
+    <p>
+      <a href="{{ config.site_url }}">回到首页</a>
+      <span> · </span>
+      <a href="{{ config.site_url }}blog/">看看博客</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

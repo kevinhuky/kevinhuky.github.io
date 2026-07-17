@@ -1,11 +1,15 @@
 ---
 title: 《Effective Java》阅读总结
+description: 《Effective Java》核心实践提炼：把书读薄，聚焦最有价值的编码原则，便于回顾与应用。
 draft: false
 authors: [huyi]
 date: 2025-09-09
 slug: effective-java
 categories:
   - 阅读
+tags:
+  - Java
+  - 读书笔记
 ---
 
 "对《Effective Java》进行阅读提炼，把书读薄，聚焦关键实践与原则，形成便于回顾和应用的笔记。"<!-- more -->

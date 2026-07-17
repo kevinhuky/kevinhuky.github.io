@@ -1,5 +1,6 @@
 ---
 title: 用 Cursor 有感：AI 编程工具带来的冲击
+description: 用 Cursor 的真实感受：AI 编程工具正在重塑开发方式，程序员的价值将走向何方？
 draft: false
 authors: [huyi]
 date: 2025-06-29
@@ -7,6 +8,9 @@ slug: cursor-experience
 categories:
   - 随笔
   - AI
+tags:
+  - AI
+  - 效率工具
 ---
 
 随着 AI 编程工具的发展，传统开发方式正在被重塑。程序员的工作还能保有多少“人”的价值？在 AI 逐渐掌握编程技能的时代，我们该何去何从。<!-- more -->

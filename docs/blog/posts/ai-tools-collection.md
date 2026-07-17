@@ -1,5 +1,6 @@
 ---
 title: 我在用的 AI 工具，以及一些使用心得
+description: 记录我日常在用的 AI 工具与真实使用心得：编程助手、效率工具的选型与个人体验。
 draft: false
 authors: [huyi]
 date: 2025-11-15
@@ -7,6 +8,9 @@ slug: ai-tools-collection
 categories:
   - 随笔
   - AI
+tags:
+  - AI
+  - 效率工具
 ---
 
 AI 工具已经变成我日常工作的一部分了。这篇文章记录一下我目前在用哪些工具，以及一些使用心得。不是什么全面的测评，就是个人体验。<!-- more -->

@@ -1,16 +1,18 @@
 #[Info]
-site_name: KevinHu's Website
+site_name: RioHu's Website
 site_url: https://devhiker.xyz
-site_author: kevinHu
+site_author: Rio HU
+site_description: Rio 的个人博客：Java 后端、AI 编程工具与独立开发的技术笔记和随想。
 
-copyright: Copyright &copy; 2025 KevinHu
+copyright: Copyright &copy; 2026 Rio HU
 #[Config]
 #[Repo Config]
-repo_url: https://github.com/kevinhuky/kevinhuky.github.io 
-repo_name: kevinhuky.github.io
+repo_url: https://github.com/riohuky/riohuky.github.io
+repo_name: riohuky.github.io
 
 #[扩展]
 extra:
+    generator: false
     include:
       - CNAME
     consent:
@@ -22,10 +24,10 @@ extra:
           make our documentation better.
     social:
         - icon: fontawesome/brands/github
-          link: https://github.com/kevinhuky
+          link: https://github.com/riohuky
 
         - icon: fontawesome/solid/paper-plane
-          link: mailto:kangyinghuu@gmail.com
+          link: mailto:contact@riohu.com
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -47,12 +49,27 @@ markdown_extensions:
 theme:
     name: 'material'                            #主题名
     favicon: assets/logo/logo.png
-    language: en
+    language: zh
+    font:
+        text: Noto Sans SC                      #思源黑体，按需子集加载（含真 700 字重）
     palette:
-        primary: blue grey
+        # 跟随系统偏好的浅色 / 深色模式，可手动切换
+        - media: "(prefers-color-scheme: light)"
+          scheme: default
+          primary: white
+          accent: indigo
+          toggle:
+              icon: material/weather-night
+              name: 切换到深色模式
+        - media: "(prefers-color-scheme: dark)"
+          scheme: slate
+          primary: black
+          accent: indigo
+          toggle:
+              icon: material/weather-sunny
+              name: 切换到浅色模式
     custom_dir: docs/templates
     icon:
-        logo: material/coffee
         repo: fontawesome/brands/github         #指定仓库图标
     features:
         - search.suggest  # 启用搜索建议
@@ -67,10 +84,14 @@ theme:
         - content.blog                          # 启用博客内容特性
         - content.tabs.link                     # 启用内容标签链接
         - content.code.annotate
+        - content.code.copy                     # 代码块一键复制
         - header.autohide                       # 滚动时自动隐藏/显示导航条
 
 plugins:
   - autorefs
+  - tags
+  - social:
+      enabled: !ENV [CI, false]   # 社交分享卡片仅在 CI 构建时生成
   - rss:
       match_path: blog/posts/.*
       date_from_meta:
@@ -80,9 +101,12 @@ plugins:
         - tags
   - blog:
       draft: true
+      post_url_format: "{slug}"   # 简洁永久链接：/blog/<slug>/
   - search:
-#   - minify:
-#       minify_html: true
+      # Material 官方推荐的分词 separator（字符类中含零宽空格 U+200B）
+      separator: '[\s​\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - minify:
+      minify_html: true
 #   - bibtex:
 #       bib_file: "docs/references.bib"
 #       csl_file: "docs/ieee.csl"
@@ -93,7 +117,8 @@ extra_css:
 
 nav:
   - About: index.md
-  - Blog: 
+  - Blog:
      - blog/index.md
+     - 标签: blog/tags.md
     
 

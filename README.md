@@ -32,7 +32,7 @@
 
 ## 联系
 
-- GitHub: [@kevinhuky](https://github.com/kevinhuky)
+- GitHub: [@riohuky](https://github.com/riohuky)
 - Email: kangyinghuu@gmail.com
 
 ---

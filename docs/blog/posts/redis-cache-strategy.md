@@ -1,5 +1,6 @@
 ---
 title: Redis 缓存策略与常见问题解决方案
+description: 深入讲解 Redis 缓存策略、数据结构选型，以及缓存穿透、击穿、雪崩等常见问题的解决方案。
 draft: false
 authors: [huyi]
 date: 2025-09-01
@@ -7,6 +8,9 @@ slug: redis-cache-strategy
 categories:
   - Engineering
   - 终生学习
+tags:
+  - Redis
+  - 缓存
 ---
 
 Redis 是最流行的内存数据库之一，广泛用于缓存、会话管理、排行榜等场景。本文深入讲解 Redis 缓存策略、数据结构选型、以及缓存穿透、击穿、雪崩等常见问题的解决方案。<!-- more -->

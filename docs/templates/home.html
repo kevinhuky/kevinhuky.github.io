@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+
+{# Homepage: a quiet, vertically centered personal card.
+   All content lives in docs/index.md — this template only centers it. #}
+
+{% block container %}
+<div class="mdx-home">
+  <div class="mdx-home__inner md-typeset">
+    {{ page.content }}
+  </div>
+</div>
+{% endblock %}

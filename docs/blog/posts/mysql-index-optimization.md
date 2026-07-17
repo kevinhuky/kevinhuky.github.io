@@ -1,5 +1,6 @@
 ---
 title: MySQL 索引优化实战指南
+description: 从索引原理出发，讲解 MySQL 索引类型、创建原则、优化技巧与常见索引失效场景，帮你写出更高效的 SQL。
 draft: false
 authors: [huyi]
 date: 2025-08-10
@@ -7,6 +8,9 @@ slug: mysql-index-optimization
 categories:
   - Engineering
   - 终生学习
+tags:
+  - MySQL
+  - 数据库
 ---
 
 索引是数据库性能优化的重要手段，本文从索引原理出发，详细讲解索引的类型、创建原则、优化技巧以及常见的索引失效场景，帮助你写出更高效的 SQL。<!-- more -->

@@ -1,5 +1,6 @@
 ---
 title: Spring Boot 最佳实践与常用技巧
+description: Spring Boot 开发最佳实践：项目结构、配置管理、异常处理、日志规范与性能优化技巧。
 draft: false
 authors: [huyi]
 date: 2025-07-15
@@ -7,6 +8,9 @@ slug: spring-boot-best-practices
 categories:
   - Engineering
   - 终生学习
+tags:
+  - Java
+  - Spring Boot
 ---
 
 本文总结 Spring Boot 开发中的最佳实践，涵盖项目结构、配置管理、异常处理、日志规范、性能优化等方面，帮助开发者构建更健壮、更易维护的应用程序。<!-- more -->
