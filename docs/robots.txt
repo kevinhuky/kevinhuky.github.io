@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://devhiker.xyz/sitemap.xml
+Sitemap: https://riohu.com/sitemap.xml
