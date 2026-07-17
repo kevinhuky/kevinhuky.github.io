@@ -1,0 +1,289 @@
+/* ------------------------------------------------------------------
+   Global minimal theme
+   ------------------------------------------------------------------ */
+
+/* Light, quiet footer instead of the default dark block */
+:root {
+  --md-footer-bg-color: transparent;
+  --md-footer-bg-color--dark: transparent;
+  --md-footer-fg-color: var(--md-default-fg-color);
+  --md-footer-fg-color--light: var(--md-default-fg-color--light);
+  --md-footer-fg-color--lighter: var(--md-default-fg-color--lighter);
+}
+
+body,
+input {
+  /* System font stack (theme.font: false — no Google Fonts request):
+     Latin on the system UI font, CJK on PingFang / Hiragino / YaHei */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    sans-serif;
+}
+
+/* Header + tabs: fully transparent so the page reads as one surface —
+   the body background (and the homepage glow) flows straight through.
+   A light backdrop blur keeps text readable when content scrolls under. */
+.md-header,
+.md-tabs {
+  background: transparent;
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
+  box-shadow: none;
+}
+
+.md-header[data-md-state="shadow"],
+.md-header--shadow {
+  box-shadow: none;
+}
+
+.md-tabs__link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover,
+.md-tabs__link:focus {
+  opacity: 1;
+}
+
+/* No logo — the site name alone is the brand */
+.md-header__button.md-logo {
+  display: none;
+}
+
+/* Align the title with the tabs below:
+   tabs text sits at .2rem (list margin) + .6rem (item padding) = .8rem;
+   the theme's [dir=ltr] rule puts the title at .2rem + 1rem = 1.2rem,
+   so pull it back to .2rem + .6rem = .8rem */
+[dir="ltr"] .md-header__title {
+  margin-left: 0.6rem;
+}
+
+.md-header__topic,
+.md-header__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Search field: quieter */
+.md-search__form {
+  border-radius: 999px;
+}
+
+[data-md-toggle="search"]:checked ~ .md-header .md-search__form {
+  border-radius: 0.6rem 0.6rem 0 0;
+}
+
+/* Footer: thin divider, light text */
+.md-footer {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Typography: tighter headings, comfortable body */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* Blog list: confident titles over quiet metadata.
+   System CJK fonts render true bold at 700 — keep title weight here. */
+.md-post .md-post__content h1,
+.md-post .md-post__content h2 {
+  margin: 0.3rem 0 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+  color: var(--md-default-fg-color);
+}
+
+.md-post .md-post__content h1 a,
+.md-post .md-post__content h2 a {
+  color: inherit;
+  /* animated underline: grows from the left on hover */
+  background-image: linear-gradient(
+    var(--md-accent-fg-color),
+    var(--md-accent-fg-color)
+  );
+  background-size: 0 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: color 0.2s ease, background-size 0.25s ease;
+}
+
+.md-post .md-post__content h1 a:hover,
+.md-post .md-post__content h1 a:focus,
+.md-post .md-post__content h2 a:hover,
+.md-post .md-post__content h2 a:focus {
+  color: var(--md-accent-fg-color);
+  background-size: 100% 2px;
+}
+
+/* Metadata line above the title: smaller and quieter,
+   so the title carries the visual weight */
+.md-post__header {
+  font-size: 0.68rem;
+  color: var(--md-default-fg-color--lighter);
+}
+
+.md-typeset {
+  line-height: 1.75;
+}
+
+/* Softer corners for code */
+.md-typeset pre > code {
+  border-radius: 0.55rem;
+}
+
+.md-typeset code {
+  border-radius: 0.25rem;
+}
+
+/* ------------------------------------------------------------------
+   Homepage — a quiet, vertically centered personal card
+   ------------------------------------------------------------------ */
+
+.mdx-home {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* viewport minus header + tabs + footer, so the card sits centered
+     in the visible area without scrolling */
+  min-height: calc(100vh - 11rem);
+}
+
+/* Soft ambient glow behind the card: a cool blue top-left,
+   a faint violet bottom-right. Fixed to the viewport so it fills
+   the whole page — including the header/footer whitespace — and
+   shows through the frosted header. Alphas are the whole design —
+   keep them barely visible. */
+.mdx-home::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(34rem 26rem at 14% 12%, rgba(99, 102, 241, 0.09), transparent 62%),
+    radial-gradient(30rem 24rem at 86% 88%, rgba(168, 85, 247, 0.07), transparent 62%);
+}
+
+/* Dark scheme needs slightly stronger glow to read over the dark base */
+[data-md-color-scheme="slate"] .mdx-home::before {
+  background:
+    radial-gradient(34rem 26rem at 16% 18%, rgba(99, 102, 241, 0.14), transparent 62%),
+    radial-gradient(30rem 24rem at 84% 82%, rgba(168, 85, 247, 0.11), transparent 62%);
+}
+
+.mdx-home__inner {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+/* Staggered entrance: name, then bio, then links */
+.mdx-home__inner > * {
+  animation: mdx-fade 0.7s ease both;
+}
+
+.mdx-home__inner > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.mdx-home__inner > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+/* Name */
+.mdx-home__inner h1 {
+  margin: 0 0 1.3rem;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--md-default-fg-color);
+}
+
+/* Bio */
+.mdx-home__inner > p {
+  max-width: 24rem;
+  margin: 0 auto;
+  color: var(--md-default-fg-color--light);
+  line-height: 2;
+}
+
+/* Quiet inline links under the bio */
+.mdx-home__inner .home-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  margin: 2.2rem auto 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.mdx-home__inner .home-links span {
+  color: var(--md-default-fg-color--lightest);
+}
+
+.mdx-home__inner .home-links a {
+  color: var(--md-default-fg-color--light);
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.mdx-home__inner .home-links a:hover,
+.mdx-home__inner .home-links a:focus {
+  color: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+}
+
+/* 404 page */
+.mdx-404 {
+  text-align: center;
+}
+
+.mdx-404 h1 {
+  margin: 0 0 0.8rem;
+  font-size: 3.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--md-default-fg-color--lightest);
+}
+
+@keyframes mdx-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdx-home__inner > * {
+    animation: none;
+  }
+}
+
+@media screen and (max-width: 44.9375em) {
+  .mdx-home {
+    /* tabs bar is hidden on narrow screens */
+    min-height: calc(100vh - 9rem);
+  }
+
+  .mdx-home__inner h1 {
+    font-size: 1.7rem;
+  }
+}
