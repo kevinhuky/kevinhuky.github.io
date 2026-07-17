@@ -5,3 +5,4 @@ site/
 __pycache__/
 .venv/
 venv/
+Snipaste_*.png
