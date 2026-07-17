@@ -13,8 +13,8 @@
 
 body,
 input {
-  /* Latin falls through to the system UI font; CJK lands on Noto Sans SC
-     (loaded via theme.font) before the system CJK fallbacks */
+  /* System font stack (theme.font: false — no Google Fonts request):
+     Latin on the system UI font, CJK on PingFang / Hiragino / YaHei */
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     sans-serif;
@@ -92,8 +92,7 @@ input {
 }
 
 /* Blog list: confident titles over quiet metadata.
-   Weight 700 matches the loaded Noto Sans SC weight — don't go higher,
-   anything above falls back to ugly synthetic bold. */
+   System CJK fonts render true bold at 700 — keep title weight here. */
 .md-post .md-post__content h1,
 .md-post .md-post__content h2 {
   margin: 0.3rem 0 0.6rem;

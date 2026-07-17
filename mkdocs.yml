@@ -45,8 +45,7 @@ theme:
     name: 'material'                            #主题名
     favicon: assets/logo/logo.png
     language: zh
-    font:
-        text: Noto Sans SC                      #思源黑体，按需子集加载（含真 700 字重）
+    font: false                             #不加载 Google Fonts，用系统字体栈（见 extra.css），国内访问更快
     palette:
         # 跟随系统偏好的浅色 / 深色模式，可手动切换
         - media: "(prefers-color-scheme: light)"
