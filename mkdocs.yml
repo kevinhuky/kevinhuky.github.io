@@ -15,13 +15,6 @@ extra:
     generator: false
     include:
       - CNAME
-    consent:
-        title: Cookie consent
-        description: >-
-          We use cookies to recognize your repeated visits and preferences, as well
-          as to measure the effectiveness of our documentation and whether users
-          find what they're searching for. With your consent, you're helping us to
-          make our documentation better.
     social:
         - icon: fontawesome/brands/github
           link: https://github.com/riohuky
@@ -39,9 +32,8 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - footnotes
-  - admonition    
+  - admonition
   - pymdownx.details
-  - pymdownx.superfences
   - attr_list
   - md_in_html
   - def_list
