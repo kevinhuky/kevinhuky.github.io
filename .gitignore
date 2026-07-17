@@ -1,0 +1,7 @@
+# MkDocs 本地构建产物（部署由 CI 的 gh-deploy 构建，不使用此目录）
+site/
+
+# Python
+__pycache__/
+.venv/
+venv/
